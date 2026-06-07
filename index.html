@@ -433,7 +433,7 @@
   <!-- ==========================================================
        HERO
        ========================================================== -->
-  <section class="hero">
+  <section id="home" class="hero">
     <div class="container">
       <div class="hero-grid">
         <div class="hero-img-wrap">
@@ -449,7 +449,7 @@
           </h1>
           <div class="hero-sub">
             <span style="color:var(--red)">$</span> whoami
-            <span style="color:var(--text-muted)">→ cybersecurity · blue team · dfir · iam</span>
+            <span style="color:var(--text-muted)">→ cybersecurity · Forensics Analysis · CSIRT · Identity &amp; Access Management</span>
           </div>
 
           <div class="tags">
@@ -479,10 +479,10 @@
         <div class="term-body">
           <span class="prompt">lcampassi@cyber:~$</span> cat intro.md<br/>
           <br/>
-          Cybersecurity professional · 3 years hands-on IAM consulting<br/>
-          Blue Team operations · digital forensics · malware analysis<br/>
-          ISO/IEC 27001 · NIST CSF · CIS Controls<br/>
-          <span style="color:var(--red)">→</span> bridging secure infra with offensive insight<br/>
+          Cybersecurity professional with 3 years of hands-on experience in IAM consulting<br/>
+          and a deep focus on Blue Team operations, digital forensics, and malware analysis.<br/>
+          I work at the intersection of identity governance, incident response, and compliance —<br/>
+          bridging secure infrastructure with offensive insight to build resilient defenses.<br/>
           <span class="prompt">lcampassi@cyber:~$</span> <span class="cursor"></span>
         </div>
       </div>
@@ -498,7 +498,7 @@
       <h2 class="section-title">Profile</h2>
 
       <details class="collapse" open>
-        <summary>Professional Summary <span style="font-size:.6rem;color:var(--text-muted);font-weight:400;">(click to expand)</span></summary>
+        <summary>Professional Summary</summary>
         <div class="collapse-body">
           <p>
             Cybersecurity professional with <strong style="color:var(--text);">3 years of hands-on experience</strong> in
@@ -592,17 +592,20 @@
           <div class="tl-company">Plug-Zone</div>
           <div class="tl-date">2023 — Present</div>
 
+          <div style="font-size:.78rem;color:var(--text-dim);line-height:1.7;margin-top:4px;">
+            Leading a technical team for cybersecurity consulting across enterprise clients — incident analysis,
+            vulnerability management, compliance-driven security operations, and service quality under ISO 9001.
+          </div>
+
           <details class="collapse" style="margin-top:8px;">
-            <summary>Details</summary>
+            <summary>Key achievements</summary>
             <div class="collapse-body">
-              <p>Leading a technical team for cybersecurity consulting across enterprise clients. Day-to-day: incident analysis, vulnerability management, compliance-driven security ops, technical documentation, and service quality under ISO 9001.</p>
-              <p><strong style="color:var(--text);">Key achievements:</strong></p>
               <p style="padding-left:12px;border-left:2px solid var(--red-dark);">
-                • Architected identity centralization for ~20,000-user org<br/>
+                • Architected identity centralization for ~20,000-user organization<br/>
                 • Compliance engagements: NIST CSF, ISO 27001, CIS Controls<br/>
                 • SIEM monitoring (Splunk, Wazuh), firewall policy, SoD enforcement<br/>
                 • Access recertification &amp; identity revalidation processes<br/>
-                • Zero Trust access policy design
+                • Zero Trust access policy design across enterprise environments
               </p>
             </div>
           </details>
@@ -641,9 +644,9 @@
           <span class="skill-chip">Wazuh</span>
           <span class="skill-chip">Vulnerability Assessment</span>
           <span class="skill-chip">Incident Response</span>
-          <span class="skill-chip">Kali Linux</span>
-          <span class="skill-chip">Wireshark</span>
-          <span class="skill-chip">Sysinternals</span>
+          <span class="skill-chip">Security Tools</span>
+          <span class="skill-chip">Network Analysis</span>
+          <span class="skill-chip">EDR/XDR</span>
         </div>
       </div>
       <div class="skill-group">
@@ -849,6 +852,72 @@
       </p>
     </div>
   </footer>
+
+  <script>
+    // Active nav section highlight on scroll
+    (function(){
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = {
+        'home': document.querySelector('a[href="#"]'),
+        'exp': document.querySelector('a[href="#exp"]'),
+        'work': document.querySelector('a[href="#work"]'),
+        'skills': document.querySelector('a[href="#skills"]'),
+        'projects': document.querySelector('a[href="#projects"]'),
+        'contact': document.querySelector('a[href="#contact"]'),
+      };
+
+      // Map nav links to their sections for easier access
+      const linkMap = [
+        { id: 'home', link: navLinks['home'] },
+        { id: 'exp', link: navLinks['exp'] },
+        { id: 'work', link: navLinks['work'] },
+        { id: 'skills', link: navLinks['skills'] },
+        { id: 'projects', link: navLinks['projects'] },
+        { id: 'contact', link: navLinks['contact'] },
+      ];
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .nav-active {
+          color: var(--red) !important;
+          background: var(--red-glow) !important;
+        }
+        .nav-contact-active {
+          background: var(--red-dim) !important;
+        }
+      `;
+      document.head.appendChild(style);
+
+      const observer = new IntersectionObserver((entries) => {
+        // Find which section is most visible
+        let maxRatio = 0;
+        let activeId = 'home';
+
+        entries.forEach(entry => {
+          if (entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio;
+            activeId = entry.target.id;
+          }
+        });
+
+        // Update nav styles
+        linkMap.forEach(({ id, link }) => {
+          if (!link) return;
+          if (id === activeId) {
+            link.classList.add('nav-active');
+            if (id === 'contact') link.classList.add('nav-contact-active');
+          } else {
+            link.classList.remove('nav-active', 'nav-contact-active');
+          }
+        });
+      }, {
+        threshold: [0.2, 0.4, 0.6],
+        rootMargin: '-52px 0px 0px 0px'
+      });
+
+      sections.forEach(s => observer.observe(s));
+    })();
+  </script>
 
 </body>
 </html>
