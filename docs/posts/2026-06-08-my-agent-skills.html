@@ -151,23 +151,23 @@
 
       <div class="post-content">
 
-<p>La idea nacio de una frustracion simple: cada vez que queria hacer algo especifico con opencode -- gestionar contenedores, revisar un log del sistema, configurar una regla de nftables, o montar un backup con restic -- tenia que explicarle el contexto desde cero. El asistente no sabia que herramientas uso, que rutas me interesan, ni que convenciones sigo.</p>
+<p>La idea nació de una frustración simple: cada vez que quería hacer algo específico con opencode — gestionar contenedores, revisar un log del sistema, configurar una regla de nftables, o montar un backup con restic — tenía que explicarle el contexto desde cero. El asistente no sabía qué herramientas uso, qué rutas me interesan, ni qué convenciones sigo.</p>
 
-<p>Podria haber escrito prompts cada vez. Pero si hay algo que aprendi en sistemas es que repetir tareas manuales es senial de que falta automatizacion. El mismo principio que aplico con scripts de bash y systemd timers lo queria aplicar a mi interaccion con AI: definir contextos reutilizables que mi agente pudiera cargar bajo demanda.</p>
+<p>Podría haber escrito prompts cada vez. Pero si hay algo que aprendí en sistemas es que repetir tareas manuales es señal de que falta automatización. El mismo principio que aplico con scripts de bash y systemd timers lo quería aplicar a mi interacción con IA: definir contextos reutilizables que mi agente pudiera cargar bajo demanda.</p>
 
-<p>Asi nacio <strong>MY-AGENT-SKILLS</strong>, un directorio en <code>~/MY-AGENT-SKILLS/SKILLS/</code> donde cada skill es un subagente especializado con instrucciones detalladas para un dominio concreto.</p>
+<p>Así nació <strong>MY-AGENT-SKILLS</strong>, un directorio en <code>~/MY-AGENT-SKILLS/SKILLS/</code> donde cada skill es un subagente especializado con instrucciones detalladas para un dominio concreto.</p>
 
-<h2>Que es opencode y como lo uso</h2>
+<h2>Qué es opencode y cómo lo uso</h2>
 
-<p><a href="https://opencode.ai">opencode</a> es un copilot de terminal. No es un IDE plugin ni un chat web -- corre en tu consola, accede a tu filesystem, ejecuta comandos, edita archivos. Le decis "levantame un contenedor de testing" y te lo hace. El problema es que sin contexto suficiente, sus decisiones son genericas. Y un sysadmin no quiere generico, quiere predecible.</p>
+<p><a href="https://opencode.ai">opencode</a> es un copilot de terminal. No es un IDE plugin ni un chat web — corre en tu consola, accede a tu filesystem, ejecuta comandos, edita archivos. Le decís "levantame un contenedor de testing" y te lo hace. El problema es que sin contexto suficiente, sus decisiones son genéricas. Y un sysadmin no quiere genérico, quiere predecible.</p>
 
-<p>Lo uso como mi interfaz principal para interactuar con el sistema. En vez de recordar la sintaxis exacta de cada herramienta, describo el objetivo y opencode lo ejecuta. Pero para que funcione bien necesita saber como trabajo: que sistema operativo uso, que herramientas prefiero, que estructura de directorios manejo, que politicas de seguridad sigo.</p>
+<p>Lo uso como mi interfaz principal para interactuar con el sistema. En vez de recordar la sintaxis exacta de cada herramienta, describo el objetivo y opencode lo ejecuta. Pero para que funcione bien necesita saber cómo trabajo: qué sistema operativo uso, qué herramientas prefiero, qué estructura de directorios manejo, qué políticas de seguridad sigo.</p>
 
 <h2>Skills en vez de prompts</h2>
 
-<p>Un skill no es mas que un archivo <code>SKILL.md</code> dentro de una carpeta con el nombre del dominio. opencode detecta estos skills automaticamente y los ofrece como opciones cuando arranca una sesion o cuando invocas un agente especifico.</p>
+<p>Un skill no es más que un archivo <code>SKILL.md</code> dentro de una carpeta con el nombre del dominio. opencode detecta estos skills automáticamente y los ofrece como opciones cuando arranca una sesión o cuando invocás un agente específico.</p>
 
-<p>Al cargar un skill, el agente obtiene instrucciones precisas sobre como comportarse en ese contexto: que comandos usar, que convenciones seguir, que precauciones tomar. No es magia, es documentacion ejecutable.</p>
+<p>Al cargar un skill, el agente obtiene instrucciones precisas sobre cómo comportarse en ese contexto: qué comandos usar, qué convenciones seguir, qué precauciones tomar. No es magia, es documentación ejecutable.</p>
 
 <p>La estructura de un skill es sencilla:</p>
 
@@ -194,53 +194,53 @@
     SKILL.md
 </code></pre>
 
-<p>Cada <code>SKILL.md</code> incluye una descripcion del dominio, ejemplos de uso, comandos frecuentes, enlaces a documentacion, y variables de contexto que el agente debe conocer. Abrir uno es entender inmediatamente como operar en ese dominio sin tener que adivinar.</p>
+<p>Cada <code>SKILL.md</code> incluye una descripción del dominio, ejemplos de uso, comandos frecuentes, enlaces a documentación, y variables de contexto que el agente debe conocer. Abrir uno es entender inmediatamente cómo operar en ese dominio sin tener que adivinar.</p>
 
-<h2>Los skills que cree</h2>
+<h2>Los skills que creé</h2>
 
-<p>Algunos son especificos de mi stack, otros son herramientas que cualquier sysadmin uses a diario:</p>
+<p>Algunos son específicos de mi stack, otros son herramientas que cualquier sysadmin usa a diario:</p>
 
 <ul>
-<li><strong>arch-manager</strong>: gestion de paquetes, systemd, kernel, bootloader, configuracion de red, usuarios, locale. Todo lo que toco en mi estacion Arch Linux.</li>
-<li><strong>docker-manager</strong>: contenedores, imagenes, volumes, networks, Docker Compose. Tambien lo uso para sandboxing de malware.</li>
-<li><strong>forensic-manager</strong>: dd, guymager, sleuthkit, volatility, foremost, analisis de artefactos Windows. Cuando agarro un disco a revisar, este skill me prepara el entorno.</li>
-<li><strong>network-manager</strong>: nftables, WireGuard, bridges, VLANs, DNS, resolucion de problemas de conectividad.</li>
-<li><strong>backup-manager</strong>: restic, borg, rsync, automatizacion con systemd timers, verificacion de restores.</li>
+<li><strong>arch-manager</strong>: gestión de paquetes, systemd, kernel, bootloader, configuración de red, usuarios, locale. Todo lo que toco en mi estación Arch Linux.</li>
+<li><strong>docker-manager</strong>: contenedores, imágenes, volúmenes, networks, Docker Compose. También lo uso para sandboxing de malware.</li>
+<li><strong>forensic-manager</strong>: dd, guymager, sleuthkit, volatility, foremost, análisis de artefactos Windows. Cuando agarro un disco a revisar, este skill me prepara el entorno.</li>
+<li><strong>network-manager</strong>: nftables, WireGuard, bridges, VLANs, DNS, resolución de problemas de conectividad.</li>
+<li><strong>backup-manager</strong>: restic, borg, rsync, automatización con systemd timers, verificación de restores.</li>
 <li><strong>hardening-manager</strong>: CIS benchmarks, lynis, OpenSCAP, hardening de kernel, SSH, firewalls, AppArmor.</li>
 <li><strong>secret-manager</strong>: pass, age, sops, GPG, bitwarden-cli, manejo de claves y archivos .env.</li>
-<li><strong>monitoring-manager</strong>: health checks, metricas de recursos, alertas, lineas de base de rendimiento.</li>
-<li><strong>automation-manager</strong>: systemd timers, cron, scripting, automatizacion multiplataforma Linux y Windows.</li>
-<li><strong>dotfiles-manager</strong>: mantenimiento de mis dotfiles, creacion de temas, documentacion.</li>
-<li><strong>homelab-manager</strong>: VMs con KVM/VirtualBox, snapshots, seguimiento de maquinas HTB/THM, writeups.</li>
-<li><strong>web-security-manager</strong>: OWASP Top 10, Burp Suite, ZAP, analisis de CORS/CSP/XXE/SSRF, fuzzing.</li>
-<li><strong>container-security-manager</strong>: Trivy, Docker Bench, Grype, cosign, SBOM, hardening de imagenes.</li>
+<li><strong>monitoring-manager</strong>: health checks, métricas de recursos, alertas, líneas de base de rendimiento.</li>
+<li><strong>automation-manager</strong>: systemd timers, cron, scripting, automatización multiplataforma Linux y Windows.</li>
+<li><strong>dotfiles-manager</strong>: mantenimiento de mis dotfiles, creación de temas, documentación.</li>
+<li><strong>homelab-manager</strong>: VMs con KVM/VirtualBox, snapshots, seguimiento de máquinas HTB/THM, writeups.</li>
+<li><strong>web-security-manager</strong>: OWASP Top 10, Burp Suite, ZAP, análisis de CORS/CSP/XXE/SSRF, fuzzing.</li>
+<li><strong>container-security-manager</strong>: Trivy, Docker Bench, Grype, cosign, SBOM, hardening de imágenes.</li>
 <li><strong>ci-cd-manager</strong>: GitHub Actions, git hooks, pipelines, matrix builds, despliegue automatizado.</li>
-<li><strong>database-manager</strong>: SQLite, PostgreSQL, MariaDB, queries, backups, migraciones, optimizacion.</li>
+<li><strong>database-manager</strong>: SQLite, PostgreSQL, MariaDB, queries, backups, migraciones, optimización.</li>
 <li><strong>threat-intel-manager</strong>: MISP, feeds STIX/TAXII, IOCs, OpenCTI, workflows de threat research.</li>
-<li><strong>reverse-engineering-manager</strong>: radare2, Ghidra headless, analisis de PE/ELF/Mach-O, GDB, YARA.</li>
-<li><strong>openvpn-manager</strong>: conexiones VPN a laboratorios de pentesting, perfiles multiples, troubleshooting.</li>
+<li><strong>reverse-engineering-manager</strong>: radare2, Ghidra headless, análisis de PE/ELF/Mach-O, GDB, YARA.</li>
+<li><strong>openvpn-manager</strong>: conexiones VPN a laboratorios de pentesting, perfiles múltiples, troubleshooting.</li>
 <li><strong>windows-manager</strong>: servicios, paquetes, procesos, disco, red, WSL, rendimiento en Windows 11.</li>
-<li><strong>obsidian-manager</strong>: gestion de mi vault Personal-Vault, notas diarias, templates, busqueda.</li>
-<li><strong>ollama-manager</strong>: modelos locales, GPU acceleration, integracion con opencode, API REST.</li>
+<li><strong>obsidian-manager</strong>: gestión de mi vault Personal-Vault, notas diarias, templates, búsqueda.</li>
+<li><strong>ollama-manager</strong>: modelos locales, GPU acceleration, integración con opencode, API REST.</li>
 <li><strong>mcp-ollama</strong>: herramientas MCP para llamar modelos de Ollama desde agents de opencode.</li>
-<li><strong>learning-manager</strong>: roadmaps de aprendizaje, seguimiento de cursos/CTFs, repeticion espaciada, skill trees.</li>
-<li><strong>portfolio-manager</strong>: actualizacion de mi landing page en /files/my-web/, secciones, contenido, deploy.</li>
-<li><strong>agent-creator</strong>: creacion de agents personalizados de opencode con estructura, tipos, permisos y flujo de trabajo.</li>
-<li><strong>orchestrator-manager</strong>: orquestacion de multiples subagentes en paralelo para tareas grandes, con protocolo de planificacion, manifiesto, workers y reconciliacion.</li>
+<li><strong>learning-manager</strong>: roadmaps de aprendizaje, seguimiento de cursos/CTFs, repetición espaciada, skill trees.</li>
+<li><strong>portfolio-manager</strong>: actualización de mi landing page en /files/my-web/, secciones, contenido, deploy.</li>
+<li><strong>agent-creator</strong>: creación de agents personalizados de opencode con estructura, tipos, permisos y flujo de trabajo.</li>
+<li><strong>orchestrator-manager</strong>: orquestación de múltiples subagentes en paralelo para tareas grandes, con protocolo de planificación, manifiesto, workers y reconciliación.</li>
 </ul>
 
-<p>Cada skill esta pensado para un momento concreto. No son excluyentes: puedo cargar <strong>docker-manager</strong> + <strong>container-security-manager</strong> juntos cuando reviso imagenes, o <strong>network-manager</strong> + <strong>hardening-manager</strong> cuando configuro un firewall.</p>
+<p>Cada skill está pensado para un momento concreto. No son excluyentes: puedo cargar <strong>docker-manager</strong> + <strong>container-security-manager</strong> juntos cuando reviso imágenes, o <strong>network-manager</strong> + <strong>hardening-manager</strong> cuando configuro un firewall.</p>
 
-<h2>Como escribe un skill</h2>
+<h2>Cómo se escribe un skill</h2>
 
 <p>No hay misterio. Un SKILL.md bien escrito tiene:</p>
 
 <ul>
-<li>Una descripcion de una linea del proposito.</li>
-<li>Instrucciones de comportamiento: que herramientas priorizar, que evitar.</li>
+<li>Una descripción de una línea del propósito.</li>
+<li>Instrucciones de comportamiento: qué herramientas priorizar, qué evitar.</li>
 <li>Comandos de referencia con ejemplos reales.</li>
 <li>Rutas y variables de contexto del sistema.</li>
-<li>Referencias a documentacion oficial o notas propias.</li>
+<li>Referencias a documentación oficial o notas propias.</li>
 </ul>
 
 <p>Un fragmento real del skill de backups:</p>
@@ -268,23 +268,23 @@ backup automation with systemd timers/cron, and restore testing.
 After every restore, run: diff -r /original/path /tmp/restore
 </code></pre>
 
-<p>Eso es todo. El agente lee esto y sabe exactamente que hacer. No necesita preguntar "donde estan tus backups?" porque ya lo sabe.</p>
+<p>Eso es todo. El agente lee esto y sabe exactamente qué hacer. No necesita preguntar "dónde están tus backups?" porque ya lo sabe.</p>
 
-<h2>Por que esto y no otra cosa</h2>
+<h2>Por qué esto y no otra cosa</h2>
 
-<p>Existen alternativas: prompts guardados, alias de comandos, scripts de bash que envuelven llamadas a la API. Pero ninguna me da el mismo nivel de integracion. Al ser parte del sistema de skills de opencode, el contexto se inyecta directamente en el loop de razonamiento del agente. No es un texto que copio y pego, es parte de su estado interno cuando trabaja.</p>
+<p>Existen alternativas: prompts guardados, alias de comandos, scripts de bash que envuelven llamadas a la API. Pero ninguna me da el mismo nivel de integración. Al ser parte del sistema de skills de opencode, el contexto se inyecta directamente en el loop de razonamiento del agente. No es un texto que copio y pego, es parte de su estado interno cuando trabaja.</p>
 
-<p>Ademas, los skills evolucionan. Cuando encuentro un nuevo patron de uso, lo agrego al SKILL.md correspondiente. Cuando una herramienta cambia, actualizo los ejemplos. Es documentacion viva, no un prompt congelado en un archivo de texto.</p>
+<p>Además, los skills evolucionan. Cuando encuentro un nuevo patrón de uso, lo agrego al SKILL.md correspondiente. Cuando una herramienta cambia, actualizo los ejemplos. Es documentación viva, no un prompt congelado en un archivo de texto.</p>
 
 <h2>Resultados</h2>
 
-<p>La diferencia es abismal. Antes pasaba los primeros 5-10 minutos de cada sesion estableciendo contexto. Ahora cargo un skill y el agente ya sabe que sistema operativo uso, que herramientas tengo instaladas, que rutas me interesan y que politicas sigo.</p>
+<p>La diferencia es abismal. Antes pasaba los primeros 5-10 minutos de cada sesión estableciendo contexto. Ahora cargo un skill y el agente ya sabe qué sistema operativo uso, qué herramientas tengo instaladas, qué rutas me interesan y qué políticas sigo.</p>
 
-<p>Errores reducidos. Las respuestas son mas precisas porque el agente no adivina. Y cuando algo sale mal, puedo depurar porque el skill define explicitamente los pasos esperados.</p>
+<p>Errores reducidos. Las respuestas son más precisas porque el agente no adivina. Y cuando algo sale mal, puedo depurar porque el skill define explícitamente los pasos esperados.</p>
 
-<p>Si usas opencode y te encuentras repitiendo el mismo contexto una y otra vez, probablemente necesitas skills. No hace falta que sean 27 como los mios. Con dos o tres que cubran tus dominios principales ya notas la diferencia.</p>
+<p>Si usás opencode y te encontrás repitiendo el mismo contexto una y otra vez, probablemente necesitás skills. No hace falta que sean 27 como los míos. Con dos o tres que cubran tus dominios principales ya notás la diferencia.</p>
 
-<p>El proyecto completo esta en <code>~/MY-AGENT-SKILLS/SKILLS/</code> y voy agregando skills a medida que encuentro dominios que lo justifican. Si trabajas con opencode, te recomiendo que construyas los tuyos. Arranca con el dominio que mas frecuentes y expandi desde ahi.</p>
+<p>El proyecto completo está en <code>~/MY-AGENT-SKILLS/SKILLS/</code> y voy agregando skills a medida que encuentro dominios que lo justifican. Si trabajás con opencode, te recomiendo que construyas los tuyos. Arrancá con el dominio que más frecuentes y expandí desde ahí.</p>
 
       </div>
 
