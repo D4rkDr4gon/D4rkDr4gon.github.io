@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linux mutó: de distro de frikis a dueño de tu sistema — lcampassi</title>
+  <meta name="description" content="Una reflexión personal sobre cómo Linux pasó de ser algo de nicho a estar en todas partes, y por qué la sensación de propiedad sobre el sistema es lo que nunca cambió." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;--red-dim:#cc1133;--red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);--red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;--bg-card:#111;--bg-hover:#1a1a1a;
+      --border:#222;--border-red:#331115;
+      --text:#ddd;--text-dim:#888;--text-muted:#555;
+    }
+
+    .container{max-width:720px;margin:0 auto;padding:0 20px}
+
+    .post-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .post-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .post-nav .brand{font-size:.85rem;font-weight:700}
+    .post-nav .brand span{color:var(--red)}
+    .post-nav a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .post-nav a:hover{color:var(--text)}
+    .post-nav .btn-blog{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .post-nav .btn-blog:hover{background:var(--red-dim)}
+
+    .post-article{padding-top:100px;padding-bottom:60px}
+    .post-header{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+    .post-header .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:12px;
+    }
+    .post-header .post-meta .tag{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-header h1{font-size:1.5rem;font-weight:700;line-height:1.3}
+    .post-header .reading-time{
+      margin-top:10px;font-size:.72rem;color:var(--text-muted);
+    }
+
+    .post-content{font-size:.88rem;color:var(--text)}
+    .post-content p{margin-bottom:18px}
+    .post-content h2{
+      font-size:1.1rem;font-weight:600;margin:32px 0 12px;
+      color:var(--text);
+    }
+    .post-content h3{
+      font-size:.95rem;font-weight:600;margin:24px 0 10px;
+      color:var(--text-dim);
+    }
+    .post-content ul,.post-content ol{
+      margin:0 0 18px 24px;
+    }
+    .post-content li{margin-bottom:6px}
+    .post-content code{
+      background:var(--bg-card);padding:2px 6px;border-radius:3px;
+      font-size:.82rem;border:1px solid var(--border);
+    }
+    .post-content pre{
+      background:var(--bg-card);padding:16px;border-radius:6px;
+      overflow-x:auto;margin-bottom:18px;
+      border:1px solid var(--border);
+      font-size:.8rem;line-height:1.5;
+    }
+    .post-content pre code{background:none;border:none;padding:0}
+    .post-content blockquote{
+      border-left:3px solid var(--red);padding:10px 16px;
+      margin:0 0 18px;background:var(--red-glow);
+      color:var(--text-dim);font-size:.85rem;
+      border-radius:0 4px 4px 0;
+    }
+    .post-content a{color:var(--red);border-bottom:1px solid transparent;transition:border-color .2s}
+    .post-content a:hover{border-color:var(--red)}
+    .post-content hr{
+      border:none;height:1px;background:var(--border);margin:30px 0;
+    }
+
+    .post-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .post-footer a{color:var(--text-dim)}
+    .post-footer a:hover{color:var(--red)}
+
+    @media(max-width:600px){
+      .post-header h1{font-size:1.2rem}
+      .post-content{font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="post-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div>
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">opinion</span>
+        </div>
+        <h1>Linux mutó: de distro de frikis a dueño de tu sistema</h1>
+        <p class="reading-time">~ 6 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Hace unos días estaba laburando en mi máquina con Arch y Qtile, con mi terminal dividida en
+          paneles, un par de workspaces, el theme con acentos rojos, todo exactamente como me gusta.
+          Y en ese momento caí: esto no es personalización, es <strong>propiedad</strong>. Este sistema
+          es mío de una forma que Windows nunca me permitió sentir, aunque lo haya administrado durante
+          años.
+        </p>
+
+        <p>
+          Arranqué con Linux a los 14 años. En ese momento, linuxero no era
+          exactamente un outsider como en los 2000, pero seguía siendo un mundo de nicho. Si bien
+          Ubuntu ya era bastante accesible y StackOverflow estaba lleno de respuestas, el ecosistema
+          todavía se sentía chico. Las comunidades estaban en sus rincones: Reddit, foros, y si
+          googleabas un error de Ubuntu caías en un hilo de Ubuntu Foros o Taringa donde alguien
+          había pegado un bloque de comandos sin explicar qué hacían. Los pegabas igual, rezando
+          para no romper todo.
+        </p>
+
+        <h2>Cuando Linux era un nicho con orgullo</h2>
+
+        <p>
+          En ese entonces, usar Linux te colocaba automáticamente en una categoría. No era mainstream.
+          No venía preinstalado en ninguna laptop que pudieras comprar en un local. Si lo usabas,
+          era porque <strong>activamente elegías</strong> estar ahí. Habías bajado un ISO, lo habías
+          grabado en un USB, habías particionado el disco con miedo de borrar todo, y después de
+          un par de intentos lograbas que arrancara el escritorio.
+        </p>
+
+        <p>
+          La sensación era increíble. Habías hecho algo que el 99% de la gente no sabía ni que existía.
+          Pero al mismo tiempo era frustrante: cada actualización podía romper algo, cada programa
+          nuevo requería buscar en tres sitios distintos cómo instalarlo, y el WiFi era una lotería
+          dependiendo del chipset que tuvieras.
+        </p>
+
+        <p>
+          Y sin embargo, seguíamos. Porque cuando funcionaba, funcionaba mejor. Era más rápido, más
+          liviano, más transparente. Los logs estaban ahí para leerlos, los procesos se podían ver,
+          todo se podía tocar. Esa sensación de <strong>control</strong> no la tenía en Windows,
+          donde todo lo importante estaba detrás de una interfaz que te mostraba lo que quería y
+          escondía el resto.
+        </p>
+
+        <h2>La mutación silenciosa</h2>
+
+        <p>
+          En algún momento, sin que nos diéramos cuenta del todo, Linux dejó de ser un nicho. Pero
+          no porque de repente todo el mundo instalara Ubuntu en su PC. Sino porque Linux se volvió
+          <strong>invisible</strong>.
+        </p>
+
+        <p>
+          Android es Linux. La nube corre Linux. Cada contenedor Docker que levantas es Linux. La
+          mayoría de los servidores web, las bases de datos, los routers, los smart TVs, los sistemas
+          embebidos, los dispositivos IoT. Todo es Linux. Incluso Windows tiene un kernel Linux
+          adentro con WSL. La mutación fue tan silenciosa que hoy, si usás internet, estás usando
+          Linux múltiples veces sin saberlo.
+        </p>
+
+        <p>
+          Las comunidades también cambiaron. StackOverflow y Reddit crecieron y se profesionalizaron.
+          Los foros de nicho fueron reemplazados por documentación oficial, blogs técnicos y, más
+          recientemente, asistentes de IA que te responden configuración de firewalls, scripts de
+          bash o reglas de iptables al instante. Hoy resolver un problema en Linux es cuestión de
+          minutos, no de horas escarbando hilos perdidos.
+        </p>
+
+        <p>
+          Pero esto no es una queja estilo "antes era mejor, ahora es para masas". Todo lo contrario.
+          Me alegra que más gente tenga acceso a esto. Que un pibe de 14 años hoy pueda tener Linux
+          en una máquina virtual, en WSL, o en una Raspberry Pi sin tener que crear un USB booteable. Que el
+          conocimiento esté disponible, que los drivers funcionen out of the box, que el WiFi ande
+          en la instalación.
+        </p>
+
+        <h2>Lo que no mutó: la filosofía</h2>
+
+        <p>
+          A pesar de todo el cambio, hay algo que se mantiene intacto y es lo que más valoro:
+          Linux te devuelve la <strong>propiedad de tu sistema</strong>.
+        </p>
+
+        <p>
+          Con Windows, sos un inquilino. Microsoft te permite usar su sistema operativo, pero las
+          decisiones importantes las toman ellos: qué actualizaciones se instalan, qué datos se
+          recopilan, qué funciones están disponibles, cuándo se deja de dar soporte a tu hardware.
+          Podés administrarlo hasta cierto punto, pero siempre estás operando dentro de los límites
+          que alguien más definió. Y esos límites se mueven sin preguntarte.
+        </p>
+
+        <p>
+          Con Linux no. Elegís tu distro, tu kernel, tu gestor de ventanas, tu sistema de init, tu
+          display server, tu shell, tu editor, tu paquetería. Podés tener un entorno completamente
+          distinto al de cualquier otra persona, y eso está bien. Nadie te va a decir que no podés
+          usar algo porque ya no está soportado, ni te va a obligar a migrar a una versión que no
+          querés.
+        </p>
+
+        <p>
+          Mi máquina actual es un ejemplo de esto. Uso Arch Linux con Qtile como window manager,
+          manejo workspaces con mod4 + números, mi prompt es Powerlevel10k con colores personalizados,
+          mi editor es Neovim con LazyVim, mi barra es Polybar en X11 y Waybar en Wayland, y tengo
+          <strong>8 temas dinámicos</strong> que cambian la apariencia completa del sistema con un
+          solo comando. Todo esto lo construí yo, durante años, iterando. No es que "configuré" un
+          sistema operativo: construí un entorno que es parte de cómo trabajo y pienso.
+        </p>
+
+        <blockquote>
+          La diferencia no es técnica. Es filosófica. Linux no te pide permiso para dejar que seas
+          el dueño de tu computadora.
+        </blockquote>
+
+        <p>
+          Y eso aplica en todos los niveles. Podés tener un Arch con Qtile como yo, o podés tener
+          un Ubuntu con GNOME y no tocar una línea de configuración. Las dos son válidas. La
+          diferencia es que si querés pasar de una a la otra, nadie te lo impide. Si querés
+          forkear un proyecto, modificar una herramienta, o simplemente entender cómo funciona algo
+          leyendo el código fuente, podés. Esa libertad no tiene precio.
+        </p>
+
+        <h2>Lo complejo sigue existiendo, y está bien</h2>
+
+        <p>
+          No voy a romantizar Linux. Sigue teniendo cosas complejas. Configurar un firewall con
+          nftables no es trivial. Debuggear un problema de audio con Pipewire puede llevarte horas.
+          Migrar de X11 a Wayland implica revisar media docena de configuraciones. Y Arch, en
+          particular, te obliga a entender tu sistema porque no hay ninguna GUI que te abstraiga
+          de la complejidad.
+        </p>
+
+        <p>
+          Pero esa complejidad no es un defecto. Es el resultado de un sistema que <strong>no te
+          esconde nada</strong>. Cuando algo anda mal en Linux, tenés las herramientas para entender
+          por qué. Los logs están en <code>journalctl</code> o en archivos de texto plano. Los
+          procesos los ves con <code>htop</code> o <code>btop</code>. Los archivos de configuración
+          son texto. Nada es una caja negra.
+        </p>
+
+        <p>
+          En Windows cuando algo anda mal, muchas veces no sabés ni por dónde empezar. El Visor de
+          Sucesos te muestra eventos crípticos, los códigos de error hay que googlearlos, y las
+          herramientas de diagnóstico cubren lo que Microsoft decidió que cubrieran. Si el problema
+          está fuera de ese perímetro, estás solo.
+        </p>
+
+        <p>
+          Hoy mi máquina es exactamente lo que quiero que sea. Tengo dual boot con Windows 11 —
+          lo uso para laburar y para la facultad, no por elección. Cuando termino de trabajar y
+          vuelvo a Arch, respiro. No es una exageración: literalmente respiro más profundo. Vuelvo
+          a un sistema donde cada tecla hace lo que yo quiero que haga, donde no hay telemetría
+          que no haya autorizado, donde si quiero cambiar algo, lo cambio y listo.
+        </p>
+
+        <p>
+          Linux mutó. Pasó de ser ese sistema de nicho que usaban tipos con nombres de usuario
+          crípticos en foros de hacía 20 años, a estar en todas partes. Pero lo que no mutó, y
+          ojalá nunca mute, es esa sensación de que cuando estás en Linux, la computadora es tuya.
+          No estás alquilando un espacio. No estás usando algo que alguien te presta mientras
+          cumplas con sus términos. La cosa es tuya. Y eso, en un mundo donde cada vez más
+          servicios y dispositivos te tratan como producto, vale más que cualquier feature.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="blog-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
