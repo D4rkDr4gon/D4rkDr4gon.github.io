@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Obsidian y mi vault Personal-Vault: así organizo mi conocimiento — lcampassi</title>
+  <meta name="description" content="Cómo uso Obsidian como segundo cerebro: vault Personal-Vault, estructura de carpetas, templates, daily notes, plugins y flujo de trabajo." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;--red-dim:#cc1133;--red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);--red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;--bg-card:#111;--bg-hover:#1a1a1a;
+      --border:#222;--border-red:#331115;
+      --text:#ddd;--text-dim:#888;--text-muted:#555;
+    }
+
+    .container{max-width:720px;margin:0 auto;padding:0 20px}
+
+    .post-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .post-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .post-nav .brand{font-size:.85rem;font-weight:700}
+    .post-nav .brand span{color:var(--red)}
+    .post-nav a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .post-nav a:hover{color:var(--text)}
+    .post-nav .btn-blog{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .post-nav .btn-blog:hover{background:var(--red-dim)}
+
+    .post-article{padding-top:100px;padding-bottom:60px}
+    .post-header{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+    .post-header .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:12px;
+    }
+    .post-header .post-meta .tag{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-header h1{font-size:1.5rem;font-weight:700;line-height:1.3}
+    .post-header .reading-time{
+      margin-top:10px;font-size:.72rem;color:var(--text-muted);
+    }
+
+    .post-content{font-size:.88rem;color:var(--text)}
+    .post-content p{margin-bottom:18px}
+    .post-content h2{
+      font-size:1.1rem;font-weight:600;margin:32px 0 12px;
+      color:var(--text);
+    }
+    .post-content h3{
+      font-size:.95rem;font-weight:600;margin:24px 0 10px;
+      color:var(--text-dim);
+    }
+    .post-content ul,.post-content ol{
+      margin:0 0 18px 24px;
+    }
+    .post-content li{margin-bottom:6px}
+    .post-content code{
+      background:var(--bg-card);padding:2px 6px;border-radius:3px;
+      font-size:.82rem;border:1px solid var(--border);
+    }
+    .post-content pre{
+      background:var(--bg-card);padding:16px;border-radius:6px;
+      overflow-x:auto;margin-bottom:18px;
+      border:1px solid var(--border);
+      font-size:.8rem;line-height:1.5;
+    }
+    .post-content pre code{background:none;border:none;padding:0}
+    .post-content blockquote{
+      border-left:3px solid var(--red);padding:10px 16px;
+      margin:0 0 18px;background:var(--red-glow);
+      color:var(--text-dim);font-size:.85rem;
+      border-radius:0 4px 4px 0;
+    }
+    .post-content a{color:var(--red);border-bottom:1px solid transparent;transition:border-color .2s}
+    .post-content a:hover{border-color:var(--red)}
+    .post-content hr{
+      border:none;height:1px;background:var(--border);margin:30px 0;
+    }
+
+    .post-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .post-footer a{color:var(--text-dim)}
+    .post-footer a:hover{color:var(--red)}
+
+    @media(max-width:600px){
+      .post-header h1{font-size:1.2rem}
+      .post-content{font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="post-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div>
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">productividad</span>
+        </div>
+        <h1>Obsidian y mi vault Personal-Vault: así organizo mi conocimiento</h1>
+        <p class="reading-time">~ 6 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Antes de Obsidian usaba <strong>Notion</strong>. Tenía todo ahí organizado, funcionaba, pero con el
+          tiempo me empezaron a pesar tres cosas: que mis notas estuvieran en una nube que no controlaba,
+          que una empresa pudiera usar mi información sin mi consentimiento, y estar atado a un modelo de
+          suscripción para acceder a funcionalidades básicas. Además, si Notion cerraba o cambiaba los
+          términos, todo mi conocimiento quedaba cautivo en su ecosistema.
+        </p>
+
+        <p>
+          Ahí empecé a buscar alternativas y encontré <strong>Obsidian</strong>. Lo que me convenció no fue
+          una feature en particular, fue el enfoque: <strong>tus notas son archivos de texto plano</strong>
+          en tu disco, no en una base de datos propietaria. Podés abrirlas con cualquier editor, no dependés
+          de una conexión a Internet, y si mañana querés migrar a otra herramienta, tus archivos se vienen
+          con vos sin perder ni una línea. Mi vault se llama <strong>Personal-Vault</strong> y está
+          sincronizado via Proton Drive
+          entre Arch Linux y Windows 11. Acá cuento cómo lo tengo organizado y qué flujo de trabajo construí alrededor.
+        </p>
+
+        <h2>La estructura del vault</h2>
+
+        <p>
+          Lejos de obsesionarme con la organización perfecta, dividí el vault en áreas bien diferenciadas
+          que reflejan cómo uso el conocimiento en el día a día:
+        </p>
+
+        <pre>
+Personal-Vault/
+├── INBOX/           # Captura rápida, diario, pendientes
+│   ├── Journal/     # Daily notes
+│   ├── General/     # Notas sueltas, ideas
+│   ├── TODOLIST/    # Listas de tareas
+│   └── HOME/        # Cosas del hogar
+├── Manuales/        # Documentación técnica, guías, papers
+├── TEMPLATES/       # Plantillas para distintos tipos de nota
+├── UFASTA/          # Facultad de ciberseguridad
+└── WORK/            # Trabajo (clientes)
+    ├── 00-CLIENTE-A/
+    ├── 01-CLIENTE-B/
+    └── 02-CLIENTE-C/</pre>
+
+        <p>
+          La estructura salió de los folders que ya existen en el vault, sin inventar nada para el post.
+        </p>
+
+        <h2>Daily notes: el centro de operaciones</h2>
+
+        <p>
+          Mi daily note es lo primero que abro al arrancar el día. Está en <code>INBOX/Journal/2026/</code>
+          con formato <code>DD MMMM.md</code> (ej: "08 junio.md"). La plantilla tiene secciones para:
+        </p>
+
+        <ul>
+          <li><strong>Importante del día</strong> — lo que no puede esperar</li>
+          <li><strong>Aprendizaje</strong> — algo nuevo que descubrí</li>
+          <li><strong>Estado</strong> — cómo vengo con los proyectos</li>
+          <li><strong>Reflexiones</strong> — pensamientos sueltos</li>
+        </ul>
+
+        <p>
+          No uso las daily notes como bullet journal estricto. Las uso como <strong>bitácora</strong>:
+          anoto cosas a medida que pasan, pego outputs de comandos, linkeo a notas que voy creando.
+          Al final del día queda un registro natural de lo que hice, sin tener que sentarme a
+          "llenar el parte diario".
+        </p>
+
+        <h2>Templates que uso siempre</h2>
+
+        <p>
+          Tengo cinco plantillas que cubren el 90% de los casos:
+        </p>
+
+        <ul>
+          <li><strong>Daily note</strong> — la bitácora diaria que mencioné arriba</li>
+          <li><strong>Notas generales</strong> — para conocimiento técnico, con tag <code>KNOWLEDGE</code></li>
+          <li><strong>MOCs</strong> — mapas de contenido, básicamente índices temáticos</li>
+          <li><strong>NOTA FACULTAD</strong> — para cada clase de la facultad, con tag <code>UNIVERSIDAD</code></li>
+          <li><strong>Ticket</strong> — incidentes técnicos con RCA, resolución y lecciones aprendidas</li>
+        </ul>
+
+        <p>
+          El template de facultad me salva todas las semanas. Tiene frontmatter predefinido con la materia,
+          fecha, profesor, y tags. Abro la clase, creo nota desde template, y mientras el profesor habla
+          Voy completando. Después enlazo los conceptos que vi con notas existentes o creo nuevas.
+        </p>
+
+        <h2>Los plugins que instalé</h2>
+
+        <p>
+          Uso Obsidian con 19 plugins. Los que más cargo en el día a día:
+        </p>
+
+        <ul>
+          <li><strong>Calendar</strong> — para navegar las daily notes desde un calendario mensual</li>
+          <li><strong>Kanban</strong> — tableros para proyectos puntuales</li>
+          <li><strong>Icon Folder</strong> — emojis en las carpetas (chiquitaje que alegra la vista)</li>
+          <li><strong>PDF++</strong> — para leer papers y marcar al margen</li>
+          <li><strong>Ollama</strong> — consultar modelos locales desde Obsidian sin salir de la nota</li>
+          <li><strong>Code Styler</strong> — bloques de código con estilo, útil para manuales técnicos</li>
+          <li><strong>Advanced Canvas</strong> — diagramas y mapas mentales</li>
+        </ul>
+
+        <p>
+          Nada de plugins falopa. Cada uno resuelve un problema concreto que tenía. Si dejo de usarlo,
+          lo deshabilito. El vault funciona igual con o sin ellos porque todo está en markdown plano.
+        </p>
+
+        <h2>Mi flujo de trabajo</h2>
+
+        <p>
+          En el día a día, el ciclo es siempre el mismo:
+        </p>
+
+        <ol>
+          <li>
+            <strong>Capturar</strong> — si aparece algo que quiero guardar (un comando, un link, una idea),
+            va directo a la daily note o a INBOX/General/.
+          </li>
+          <li>
+            <strong>Procesar</strong> — una vez por semana reviso INBOX y decido qué hacer con cada nota:
+            archivar en Manuales/, convertir en template, linkear a un MOC, o borrar si ya no sirve.
+          </li>
+          <li>
+            <strong>Conectar</strong> — cuando estudio algo nuevo, creo la nota y la linkeo con notas
+            existentes. Las backlinks de Obsidian hacen que con el tiempo aparezcan conexiones que
+            no había visto.
+          </li>
+          <li>
+            <strong>Sincronizar</strong> — el vault se sincroniza con Proton Drive para tenerlo disponible
+            desde Windows cuando estudio o laburo desde ahí.
+          </li>
+        </ol>
+
+        <blockquote>
+          La regla de oro: si lo escribí dos veces, merece una nota. Si lo busqué dos veces,
+          merece un link.
+        </blockquote>
+
+        <h2>Lo que aprendí en el proceso</h2>
+
+        <p>
+          Algunas cosas que me hubiera gustado saber antes de arrancar:
+        </p>
+
+        <ul>
+          <li>
+            <strong>No planees la estructura perfecta de entrada.</strong> Mis primeras cinco carpetas
+            no existen más. La estructura actual surgió de usar el vault, no de diseñarlo. Dejá que
+            los patrones de uso definan la organización.
+          </li>
+          <li>
+            <strong>Los templates son infraestructura.</strong> Invertí tiempo en hacer buenos templates.
+            Te ahorran segundos cada vez, pero cientos de veces al año. El ROI es inmediato.
+          </li>
+          <li>
+            <strong>El markdown plano es la posta.</strong> No uso plugins de bloques, no uso bases de datos
+            custom, no uso formatos propietarios. Todo lo que escribo es markdown estándar. Si mañana
+            Obsidian deja de existir, mis notas viven en cualquier editor de texto.
+          </li>
+          <li>
+            <strong>La búsqueda es más importante que la organización.</strong> Por más que tengas
+            carpetas perfectas, vas a encontrar las cosas buscando. Aprendé los operadores de
+            búsqueda de Obsidian y vas a depender menos de la estructura de carpetas.
+          </li>
+        </ul>
+
+        <p>
+          El vault crece conmigo. Hoy tiene notas de la facultad, manuales técnicos que fui escribiendo,
+          papers que marqué al margen, tickets de incidentes que resolví, y un montón de conexiones
+          entre todo eso que no existían antes de tenerlo todo en el mismo lugar.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>

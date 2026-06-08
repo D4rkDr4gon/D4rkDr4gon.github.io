@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escribí un paper sobre IAM Governance: esto es lo que aprendí — lcampassi</title>
+  <meta name="description" content="Reflexiones después de escribir un paper completo sobre gobierno de identidades y accesos." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;--red-dim:#cc1133;--red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);--red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;--bg-card:#111;--bg-hover:#1a1a1a;
+      --border:#222;--border-red:#331115;
+      --text:#ddd;--text-dim:#888;--text-muted:#555;
+    }
+
+    .container{max-width:720px;margin:0 auto;padding:0 20px}
+
+    .post-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .post-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .post-nav .brand{font-size:.85rem;font-weight:700}
+    .post-nav .brand span{color:var(--red)}
+    .post-nav a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .post-nav a:hover{color:var(--text)}
+    .post-nav .btn-blog{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .post-nav .btn-blog:hover{background:var(--red-dim)}
+
+    .post-article{padding-top:100px;padding-bottom:60px}
+    .post-header{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+    .post-header .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:12px;
+    }
+    .post-header .post-meta .tag{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-header h1{font-size:1.5rem;font-weight:700;line-height:1.3}
+    .post-header .reading-time{
+      margin-top:10px;font-size:.72rem;color:var(--text-muted);
+    }
+
+    .post-content{font-size:.88rem;color:var(--text)}
+    .post-content p{margin-bottom:18px}
+    .post-content h2{
+      font-size:1.1rem;font-weight:600;margin:32px 0 12px;
+      color:var(--text);
+    }
+    .post-content h3{
+      font-size:.95rem;font-weight:600;margin:24px 0 10px;
+      color:var(--text-dim);
+    }
+    .post-content ul,.post-content ol{
+      margin:0 0 18px 24px;
+    }
+    .post-content li{margin-bottom:6px}
+    .post-content code{
+      background:var(--bg-card);padding:2px 6px;border-radius:3px;
+      font-size:.82rem;border:1px solid var(--border);
+    }
+    .post-content pre{
+      background:var(--bg-card);padding:16px;border-radius:6px;
+      overflow-x:auto;margin-bottom:18px;
+      border:1px solid var(--border);
+      font-size:.8rem;line-height:1.5;
+    }
+    .post-content pre code{background:none;border:none;padding:0}
+    .post-content blockquote{
+      border-left:3px solid var(--red);padding:10px 16px;
+      margin:0 0 18px;background:var(--red-glow);
+      color:var(--text-dim);font-size:.85rem;
+      border-radius:0 4px 4px 0;
+    }
+    .post-content a{color:var(--red);border-bottom:1px solid transparent;transition:border-color .2s}
+    .post-content a:hover{border-color:var(--red)}
+    .post-content hr{
+      border:none;height:1px;background:var(--border);margin:30px 0;
+    }
+
+    .post-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .post-footer a{color:var(--text-dim)}
+    .post-footer a:hover{color:var(--red)}
+
+    @media(max-width:600px){
+      .post-header h1{font-size:1.2rem}
+      .post-content{font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="post-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div>
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">iam</span>
+        </div>
+        <h1>Escribí un paper sobre IAM Governance: esto es lo que aprendí</h1>
+        <p class="reading-time">~ 5 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          La idea original era modesta. Me senté a escribir una guía breve sobre gobierno de identidades, algo de unas pocas páginas que pudiera servir como referencia rápida. Dos meses después tenía un paper de trece secciones que cubre desde criptografía de passkeys hasta la psicología del MFA fatigue, pasando por Zero Trust, PAM, ITDR y la gestión de identidades no humanas. No fue planeado. Simplemente, cada vez que empezaba a investigar un tema, me caía por un agujero de conejo y aparecían tres cosas más que no podía ignorar.
+        </p>
+
+        <p>
+          Lo que más me sorprendió fue descubrir <strong>qué tan grande es el mapa</strong> de IAM. Yo sabía que era un área amplia, pero no dimensionaba la cantidad de dominios especializados que toca. No es solo "usuarios y contraseñas". Es arquitectura, es política organizacional, es cumplimiento normativo, es psicología del comportamiento, es criptografía aplicada. Y en cada una de esas capas hay décadas de investigación, exploits, fracasos y lecciones aprendidas.
+        </p>
+
+        <h2>ITDR: la pieza que no sabía que faltaba</h2>
+
+        <p>
+          De todo lo que investigué, lo que más me voló la cabeza fue <strong>Identity Threat Detection and Response (ITDR)</strong>. Hasta que empecé a leer sobre ataques como Golden Ticket, DCSync, MFA Fatigue y AiTM phishing, no entendía del todo por qué tener buenos controles IAM no alcanza. Podés tener el RBAC más limpio del mundo, MFA en todos lados y cero cuentas huérfanas, y aún así un atacante puede clonar tickets de Kerberos o bombardear a tu CEO con notificaciones de MFA hasta que aprueba una a las 3 de la mañana. ITDR cierra ese gap: no solo gobierna quién puede hacer qué, sino que detecta activamente cuándo alguien está tratando de eludir esos controles. Para mí fue un antes y después en cómo pienso la seguridad de identidades.
+        </p>
+
+        <h2>Passkeys y el fin de las contraseñas</h2>
+
+        <p>
+          Otro tema que me dejó pensando mucho fue el de las <strong>passkeys</strong>. El concepto es elegantemente simple: un par de claves asimétricas donde la clave privada nunca sale del dispositivo, el servidor nunca ve un secreto compartido, y la autenticación es resistente a phishing por diseño. Llevamos décadas escuchando que "las contraseñas están rotas", pero FIDO2 es la primera alternativa que realmente escala y que los grandes vendors (Apple, Google, Microsoft) están adoptando en serio. Lo loco es que el cambio no es solo técnico: es un cambio de paradigma en cómo pensamos la autenticación. Y para los equipos IAM, eso implica repensar flujos enteros de provisioning, recuperación de accesos y gestión de credenciales. Me parece que en los próximos años vamos a ver una transición masiva, y el que no se prepare ahora va a correr atrás.
+        </p>
+
+        <h2>Identidades no humanas: el elefante en la sala</h2>
+
+        <p>
+          El dato que más me alarmó investigando fue que <strong>en muchas organizaciones hay más identidades no humanas que humanas</strong>. Cuentas de servicio, API keys, tokens de CI/CD, certificados. Y reciben una fracción de los controles que aplicamos a las personas. Están hardcodeadas en repositorios, tienen permisos excesivos, sus credenciales no rotan. Si un atacante compromete una cuenta de servicio, puede tener acceso persistente durante meses sin que nadie lo note. Es un vector de ataque enorme que la mayoría de las organizaciones sigue ignorando. Este es uno de esos temas que una vez que lo ves, no podés dejar de verlo en todos lados.
+        </p>
+
+        <h2>Lo técnico es lo de menos</h2>
+
+        <p>
+          La parte más difícil de escribir fue el capítulo sobre <strong>desafíos reales</strong>. Porque ahí no hay tecnología que te salve. La shadow IT, la fricción con los usuarios, la deuda técnica de sistemas legacy, el factor humano que hace que alguien apruebe un push de MFA sin pensar porque el teléfono no para de sonar. Todo eso es política organizacional, cultura, procesos. Me di cuenta de que un especialista en IAM necesita entender de criptografía pero también de cómo negociar con el negocio, de cómo hacer que la seguridad no sea un obstáculo sino un facilitador. Y eso no se enseña en los cursos técnicos.
+        </p>
+
+        <blockquote>
+          Las organizaciones que invierten en IAM de forma seria no solo tienen mejor seguridad: operan con más eficiencia, tienen mejor experiencia de usuario y cumplen regulaciones con menos esfuerzo.
+        </blockquote>
+
+        <h2>Por qué IAM es la base de todo</h2>
+
+        <p>
+          Cerrando el paper me quedó una convicción que antes no tenía tan clara: <strong>IAM no es un componente más de la seguridad, es la capa fundamental</strong>. Toda brecha significativa termina involucrando identidades de alguna forma. No importa si es ransomware, exfiltración de datos, un insider o un APT: en algún punto del kill chain hay una identidad que fue comprometida, mal configurada o mal gestionada. No hay firewall, EDR ni segmentación de red que compense una identidad mal gobernada.
+        </p>
+
+        <p>
+          Si trabajás en seguridad y no le estás dando a IAM la atención que merece, te recomiendo que arranques hoy. No hace falta implementar Zero Trust de golpe ni comprar la herramienta más cara. Empezá por lo básico: mapeá tus identidades, limpiá permisos, implementá MFA, automatizá el offboarding. El paper que escribí cubre todo eso en detalle, pero más que el contenido técnico, lo que espero transmitir es la idea de que IAM es un viaje, no un proyecto. Y vale la pena recorrerlo.
+        </p>
+
+        <p>
+          El paper completo está en mis manuales de estudio, pero si alguien quiere leerlo, sé que el conocimiento tiene que circular. Mientras tanto, seguramente va a haber más posts desglosando algunas de estas ideas con más profundidad.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>

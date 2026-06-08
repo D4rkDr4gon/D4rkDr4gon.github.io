@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAM en la era Zero Trust — lcampassi</title>
+  <meta name="description" content="Cómo el IAM pasó de ser una tarea administrativa a ser la columna vertebral de Zero Trust." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;--red-dim:#cc1133;--red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);--red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;--bg-card:#111;--bg-hover:#1a1a1a;
+      --border:#222;--border-red:#331115;
+      --text:#ddd;--text-dim:#888;--text-muted:#555;
+    }
+
+    .container{max-width:720px;margin:0 auto;padding:0 20px}
+
+    .post-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .post-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .post-nav .brand{font-size:.85rem;font-weight:700}
+    .post-nav .brand span{color:var(--red)}
+    .post-nav a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .post-nav a:hover{color:var(--text)}
+    .post-nav .btn-blog{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .post-nav .btn-blog:hover{background:var(--red-dim)}
+
+    .post-article{padding-top:100px;padding-bottom:60px}
+    .post-header{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+    .post-header .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:12px;
+    }
+    .post-header .post-meta .tag{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-header h1{font-size:1.5rem;font-weight:700;line-height:1.3}
+    .post-header .reading-time{
+      margin-top:10px;font-size:.72rem;color:var(--text-muted);
+    }
+
+    .post-content{font-size:.88rem;color:var(--text)}
+    .post-content p{margin-bottom:18px}
+    .post-content h2{
+      font-size:1.1rem;font-weight:600;margin:32px 0 12px;
+      color:var(--text);
+    }
+    .post-content h3{
+      font-size:.95rem;font-weight:600;margin:24px 0 10px;
+      color:var(--text-dim);
+    }
+    .post-content ul,.post-content ol{
+      margin:0 0 18px 24px;
+    }
+    .post-content li{margin-bottom:6px}
+    .post-content code{
+      background:var(--bg-card);padding:2px 6px;border-radius:3px;
+      font-size:.82rem;border:1px solid var(--border);
+    }
+    .post-content pre{
+      background:var(--bg-card);padding:16px;border-radius:6px;
+      overflow-x:auto;margin-bottom:18px;
+      border:1px solid var(--border);
+      font-size:.8rem;line-height:1.5;
+    }
+    .post-content pre code{background:none;border:none;padding:0}
+    .post-content blockquote{
+      border-left:3px solid var(--red);padding:10px 16px;
+      margin:0 0 18px;background:var(--red-glow);
+      color:var(--text-dim);font-size:.85rem;
+      border-radius:0 4px 4px 0;
+    }
+    .post-content a{color:var(--red);border-bottom:1px solid transparent;transition:border-color .2s}
+    .post-content a:hover{border-color:var(--red)}
+    .post-content hr{
+      border:none;height:1px;background:var(--border);margin:30px 0;
+    }
+
+    .post-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .post-footer a{color:var(--text-dim)}
+    .post-footer a:hover{color:var(--red)}
+
+    @media(max-width:600px){
+      .post-header h1{font-size:1.2rem}
+      .post-content{font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="post-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div>
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">IAM</span>
+        </div>
+        <h1>IAM en la era Zero Trust: más que roles y políticas</h1>
+        <p class="reading-time">~ 6 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Si hay un tema que en los últimos años pasó de ser un "nice to have" a ser 
+          una prioridad de negocio, ese es el <strong>gobierno de identidades</strong>. 
+          Y cuando hablamos de Zero Trust, la identidad no es un componente más: 
+          <strong>es el nuevo perímetro</strong>.
+        </p>
+
+        <h2>El modelo tradicional ya no alcanza</h2>
+
+        <p>
+          Hasta no hace mucho, el IAM (Identity &amp; Access Management) se resumía en: 
+          dar de alta usuarios, asignar grupos, auditar accesos una vez al año si 
+          quedaba tiempo. Funcionaba en un mundo donde la red corporativa era el 
+          castillo y el firewall el foso.
+        </p>
+
+        <p>
+          Ese modelo asumía que si estabas dentro de la red, eras confiable. Hoy 
+          sabemos que eso es una receta para el desastre. El ransomware, el 
+          compromiso de cuentas privilegiadas y el movimiento lateral dependen 
+          exactamente de esa confianza implícita.
+        </p>
+
+        <blockquote>
+          "Nunca confíes, siempre verifica." — El principio fundamental de Zero Trust 
+          aplica primero y ante todo a la identidad.
+        </blockquote>
+
+        <h2>Los pilares de IAM en Zero Trust</h2>
+
+        <p>
+          En mi experiencia trabajando con plataformas como NetIQ y OneIdentity, 
+          hay cuatro pilares que sostienen una estrategia de IAM alineada con Zero Trust:
+        </p>
+
+        <h3>1. Governance continuo</h3>
+        <p>
+          Las campañas de certificación de accesos ya no pueden ser un ejercicio 
+          anual de 2 semanas. Necesitamos <strong>certificación continua</strong>: 
+          revisar en tiempo real quién tiene acceso a qué, detectar anomalías 
+          y revocar privilegios automáticamente cuando algo no cuadra.
+        </p>
+
+        <h3>2. Privileged Access Management (PAM)</h3>
+        <p>
+          Las cuentas privilegiadas son el vector más crítico. Un PAM bien 
+          implementado no se limita a guardar contraseñas en un cofre: debe 
+          registrar sesiones, hacer check-out/check-in de credenciales, rotar 
+          contraseñas automáticamente y auditar cada comando ejecutado.
+        </p>
+
+        <h3>3. Identity Analytics</h3>
+        <p>
+          El machine learning aplicado a la identidad permite detectar 
+          comportamientos anómalos: un admin que se conecta desde una IP 
+          inusual a las 3 AM, una cuenta de servicio que de repente solicita 
+          acceso a un recurso sensible. Todo esto debe disparar alertas o 
+          acciones automáticas.
+        </p>
+
+        <h3>4. Automatización de ciclo de vida</h3>
+        <p>
+          Desde el onboarding hasta el offboarding, cada cambio en el estado 
+          de un empleado (o contratista, o partner) debe reflejarse en los 
+          sistemas de identidad de forma <strong>automática y auditada</strong>. 
+          Sin planillas Excel, sin tickets manuales, sin demoras de 48 horas.
+        </p>
+
+        <h2>Un ejemplo concreto: NetIQ Identity Governance</h2>
+
+        <p>
+          Trabajando con <strong>NetIQ Identity Governance</strong>, uno de los 
+          procesos que más valor aporta es la <strong>certificación por 
+          aplicación</strong>. En lugar de pedirle a un manager que revise 500 
+          accesos de una sola vez, se segmenta por aplicación crítica y se 
+          distribuye la revisión entre los dueños de cada sistema.
+        </p>
+
+        <pre>
+# Ejemplo conceptual: query de accesos no revisados en los últimos 90 días
+# (lógica simplificada de un sistema de governance)
+
+accessos = get_all_entitlements()
+no_revisados = [a for a in accessos 
+                if a.last_review_date &lt; (now - 90d)]
+                
+for acceso in no_revisados:
+    if acceso.risk_score &gt; 70:
+        auto_revoke(acceso)
+        notify_manager(acceso)
+        </pre>
+
+        <p>
+          Este nivel de automatización no solo reduce la carga operativa, 
+          sino que minimiza la ventana de exposición de accesos innecesarios 
+          o riesgosos.
+        </p>
+
+        <h2>El desafío de las identidades no humanas</h2>
+
+        <p>
+          Un punto que muchas implementaciones subestiman son las <strong>identidades 
+          no humanas</strong>: cuentas de servicio, API keys, tokens, certificados. 
+          En un entorno cloud-native, suelen haber más identidades no humanas que 
+          humanas, y gestionarlas con el mismo rigor es fundamental.
+        </p>
+
+        <p>
+          Si una cuenta de servicio tiene permisos de administrador en producción 
+          y nunca se audita, tenés un backdoor esperando a ser descubierto.
+        </p>
+
+        <h2>Conclusión</h2>
+
+        <p>
+          El IAM ya no es solo "la herramienta que da acceso". Es el <strong>sistema 
+          nervioso</strong> de la ciberseguridad en cualquier organización moderna. 
+          Sin un gobierno de identidades sólido, no hay Zero Trust posible. 
+          Sin automatización, no hay escala. Sin analytics, no hay visibilidad.
+        </p>
+
+        <p>
+          Y al final del día, la identidad sigue siendo lo único que realmente 
+          podemos controlar.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>

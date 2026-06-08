@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bienvenidos al blog — lcampassi</title>
+  <meta name="description" content="Por qué arranco este espacio y qué voy a publicar acá." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;--red-dim:#cc1133;--red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);--red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;--bg-card:#111;--bg-hover:#1a1a1a;
+      --border:#222;--border-red:#331115;
+      --text:#ddd;--text-dim:#888;--text-muted:#555;
+    }
+
+    .container{max-width:720px;margin:0 auto;padding:0 20px}
+
+    /* NAV */
+    .post-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .post-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .post-nav .brand{font-size:.85rem;font-weight:700}
+    .post-nav .brand span{color:var(--red)}
+    .post-nav a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .post-nav a:hover{color:var(--text)}
+    .post-nav .btn-blog{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .post-nav .btn-blog:hover{background:var(--red-dim)}
+
+    /* POST */
+    .post-article{padding-top:100px;padding-bottom:60px}
+    .post-header{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+    .post-header .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:12px;
+    }
+    .post-header .post-meta .tag{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-header h1{font-size:1.5rem;font-weight:700;line-height:1.3}
+    .post-header .reading-time{
+      margin-top:10px;font-size:.72rem;color:var(--text-muted);
+    }
+
+    .post-content{font-size:.88rem;color:var(--text)}
+    .post-content p{margin-bottom:18px}
+    .post-content h2{
+      font-size:1.1rem;font-weight:600;margin:32px 0 12px;
+      color:var(--text);
+    }
+    .post-content h3{
+      font-size:.95rem;font-weight:600;margin:24px 0 10px;
+      color:var(--text-dim);
+    }
+    .post-content ul,.post-content ol{
+      margin:0 0 18px 24px;
+    }
+    .post-content li{margin-bottom:6px}
+    .post-content code{
+      background:var(--bg-card);padding:2px 6px;border-radius:3px;
+      font-size:.82rem;border:1px solid var(--border);
+    }
+    .post-content pre{
+      background:var(--bg-card);padding:16px;border-radius:6px;
+      overflow-x:auto;margin-bottom:18px;
+      border:1px solid var(--border);
+      font-size:.8rem;line-height:1.5;
+    }
+    .post-content pre code{background:none;border:none;padding:0}
+    .post-content blockquote{
+      border-left:3px solid var(--red);padding:10px 16px;
+      margin:0 0 18px;background:var(--red-glow);
+      color:var(--text-dim);font-size:.85rem;
+      border-radius:0 4px 4px 0;
+    }
+    .post-content a{color:var(--red);border-bottom:1px solid transparent;transition:border-color .2s}
+    .post-content a:hover{border-color:var(--red)}
+    .post-content hr{
+      border:none;height:1px;background:var(--border);margin:30px 0;
+    }
+
+    /* FOOTER */
+    .post-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .post-footer a{color:var(--text-dim)}
+    .post-footer a:hover{color:var(--red)}
+
+    @media(max-width:600px){
+      .post-header h1{font-size:1.2rem}
+      .post-content{font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="post-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div>
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">presentación</span>
+        </div>
+        <h1>Bienvenidos al blog</h1>
+        <p class="reading-time">~ 3 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Hace tiempo que vengo acumulando notas sueltas, bookmarks, fragmentos de terminal, 
+          configuraciones que funcionaron después de horas de prueba y error. Este blog nace 
+          como un <strong>mural personal</strong> para ordenar todo eso y compartirlo.
+        </p>
+
+        <h2>¿Por qué otro blog de tecnología?</h2>
+
+        <p>
+          No me interesa competir con los blogs masivos ni con los canales de YouTube que 
+          publican contenido todos los días. La idea es más simple: tener un lugar que sea 
+          <strong>mío</strong>, donde pueda volcar cosas que descubro en el día a día como 
+          blue teamer, entusiasta del hacking ético y arquitecto de identidad.
+        </p>
+
+        <p>
+          Si a alguien más le sirve, genial. Si no, al menos me va a servir a mí cuando 
+          dentro de seis meses necesite acordarme de cómo resolví X problema.
+        </p>
+
+        <h2>¿Qué vas a encontrar acá?</h2>
+
+        <p>En líneas generales, esto es lo que voy a publicar:</p>
+
+        <ul>
+          <li><strong>Blue Team &amp; DFIR</strong> — detección, respuesta, threat hunting, 
+          herramientas y flujos de trabajo que uso en el día a día.</li>
+          <li><strong>IAM &amp; Identity Governance</strong> — tecnologías como NetIQ, 
+          OneIdentity, Active Directory, y cómo diseñar gobiernos de identidad que escalen.</li>
+          <li><strong>Homelab &amp; automatización</strong> — mi setup con Arch Linux, 
+          WSL, Docker, scripts que escribo para simplificar tareas repetitivas.</li>
+          <li><strong>Noticias del mundo tech</strong> — filtro personal de cosas que 
+          me parecen relevantes: breaches, exploits, nuevas herramientas, cambios normativos.</li>
+          <li><strong>Cosas random que descubro</strong> — desde un truco de bash hasta 
+          una vulnerabilidad curiosa que encontré estudiando.</li>
+        </ul>
+
+        <h2>La frecuencia</h2>
+
+        <p>
+          Me propongo publicar <strong>al menos un par de veces al mes</strong>. Sin 
+          presiones, sin calendario editorial. Cuando tenga algo que valga la pena contar, 
+          lo voy a subir.
+        </p>
+
+        <h2>El formato</h2>
+
+        <p>
+          Todo está escrito directo en HTML, sin CMS, sin frameworks, sin bases de datos. 
+          Así mantengo el control total y aprendo en el proceso. El código fuente está en 
+          <a href="https://github.com/D4rkDr4gon/D4rkDr4gon.github.io" target="_blank">GitHub</a> 
+          si a alguien le interesa ver cómo está armado.
+        </p>
+
+        <blockquote>
+          Este blog es, ante todo, un ejercicio de <strong>consistencia</strong> y de 
+          <strong>dueñidad digital</strong> — tener mi propio espacio en la web, sin 
+          algoritmos de por medio.
+        </blockquote>
+
+        <p>
+          Bienvenidos. Nos leemos por acá.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>

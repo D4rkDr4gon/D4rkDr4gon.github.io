@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lcampassi — blog</title>
+  <meta name="description" content="Blog personal de Lucciano Campassi — ciberseguridad, tecnología, IAM, DFIR, blue team." />
+
+  <meta property="og:title" content="lcampassi — blog" />
+  <meta property="og:description" content="Ciberseguridad, tecnología y cosas que voy descubriendo." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lcampassi.com/docs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;
+      --red-dim:#cc1133;
+      --red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);
+      --red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;
+      --bg-card:#111;
+      --bg-hover:#1a1a1a;
+      --border:#222;
+      --border-red:#331115;
+      --text:#ddd;
+      --text-dim:#888;
+      --text-muted:#555;
+    }
+
+    .container{max-width:960px;margin:0 auto;padding:0 20px}
+
+    /* === NAV === */
+    .blog-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .blog-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .blog-nav .brand{
+      font-size:.85rem;font-weight:700;
+    }
+    .blog-nav .brand span{color:var(--red)}
+    .blog-nav .nav-links{display:flex;gap:4px;align-items:center}
+    .blog-nav .nav-links a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .blog-nav .nav-links a:hover{color:var(--text)}
+    .blog-nav .nav-links .btn-main{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .blog-nav .nav-links .btn-main:hover{background:var(--red-dim)}
+
+    /* === HEADER === */
+    .blog-header{
+      padding-top:100px;padding-bottom:40px;
+      border-bottom:1px solid var(--border);
+    }
+    .blog-header h1{
+      font-size:1.5rem;font-weight:700;margin-bottom:8px;
+    }
+    .blog-header h1 span{color:var(--red)}
+    .blog-header p{color:var(--text-dim);font-size:.85rem;max-width:600px}
+    .blog-header .tagline{
+      display:flex;align-items:center;gap:8px;
+      margin-top:12px;
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .blog-header .tagline i{color:var(--red);font-size:.6rem}
+
+    /* === SEARCH === */
+    .search-wrap{
+      margin-top:20px;
+      position:relative;
+    }
+    .search-wrap i{
+      position:absolute;
+      left:14px;top:50%;
+      transform:translateY(-50%);
+      color:var(--text-muted);
+      font-size:.78rem;
+      pointer-events:none;
+    }
+    .search-input{
+      width:100%;
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:6px;
+      padding:10px 14px 10px 38px;
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      font-size:.82rem;
+      color:var(--text);
+      outline:none;
+      transition:border-color .2s;
+    }
+    .search-input::placeholder{color:var(--text-muted);font-size:.75rem}
+    .search-input:focus{border-color:var(--red-dark)}
+    .search-input:focus ~ i{color:var(--red)}
+
+    .no-results{
+      display:none;
+      text-align:center;
+      padding:40px 20px;
+      color:var(--text-muted);
+      font-size:.85rem;
+      border:1px dashed var(--border);
+      border-radius:6px;
+    }
+    .no-results i{color:var(--red);margin-right:8px}
+
+    /* === POST LIST === */
+    .post-list{padding:40px 0}
+
+    .post-card{
+      display:block;
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:6px;
+      padding:24px;
+      margin-bottom:20px;
+      transition:background .2s,border-color .2s;
+    }
+    .post-card:hover{
+      background:var(--bg-hover);
+      border-color:var(--red-dark);
+    }
+
+    .post-card .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:8px;
+    }
+    .post-card .post-meta .tag{
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);
+      color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-card h2{
+      font-size:1rem;font-weight:600;
+      margin-bottom:6px;
+      transition:color .2s;
+    }
+    .post-card:hover h2{color:var(--red)}
+    .post-card .post-excerpt{
+      font-size:.78rem;color:var(--text-dim);
+      line-height:1.5;
+    }
+    .post-card .read-more{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:.72rem;color:var(--red);margin-top:12px;
+      transition:gap .2s;
+    }
+    .post-card:hover .read-more{gap:10px}
+
+    /* === FOOTER === */
+    .blog-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .blog-footer a{color:var(--text-dim)}
+    .blog-footer a:hover{color:var(--red)}
+
+    /* === RESPONSIVE === */
+    @media(max-width:600px){
+      .blog-nav .nav-links a{font-size:.62rem;padding:4px 6px}
+      .blog-header h1{font-size:1.2rem}
+      .post-card{padding:18px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== NAV ========== -->
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/" title="Volver al portfolio"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/" style="color:var(--red);font-weight:600;">blog</a>
+        <a href="/#contact" class="btn-main">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HEADER ========== -->
+  <header class="blog-header">
+    <div class="container">
+      <h1>~/blog<span>$</span></h1>
+      <p>Cosas que voy descubriendo en ciberseguridad, tecnología y sistemas. Un mural personal que actualizo un par de veces al mes.</p>
+      <div class="tagline">
+        <i class="fas fa-circle"></i> lcampassi@cyber:~$ cat &gt; _posts
+      </div>
+      <div class="search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="buscar posts..." autocomplete="off" />
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== POSTS ========== -->
+  <section class="post-list">
+    <div class="container">
+
+      <div class="no-results" id="noResults">
+        <i class="fas fa-search-minus"></i> no hay posts que coincidan con tu búsqueda
+      </div>
+
+      <!-- Post 1 -->
+      <a href="posts/2026-06-08-bienvenidos-al-blog.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">presentación</span>
+        </div>
+        <h2>Bienvenidos al blog</h2>
+        <p class="post-excerpt">
+          Por qué arranco este espacio, qué voy a publicar acá y cómo pienso mantenerlo vivo. Spoiler: no es un blog técnico tradicional.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <!-- Post 2 -->
+      <a href="posts/2026-06-08-iam-zero-trust.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">IAM</span>
+        </div>
+        <h2>IAM en la era Zero Trust: más que roles y políticas</h2>
+        <p class="post-excerpt">
+          Una reflexión sobre cómo el Identity &amp; Access Management evolucionó de ser una tarea administrativa a convertirse en la columna vertebral de cualquier arquitectura Zero Trust.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <!-- Post 3 -->
+      <a href="posts/2026-06-08-dotfiles-arch.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">dotfiles</span>
+        </div>
+        <h2>Mis dotfiles de Arch Linux: el entorno que construí para trabajar y aprender</h2>
+        <p class="post-excerpt">
+          Cómo tengo organizados mis dotfiles de Arch Linux: Qtile, Neovim, Zsh, polybar, rofi, kitty y un theme manager propio. Un proyecto que nunca se termina pero siempre mejora.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <!-- Post 4 -->
+      <a href="posts/2026-06-08-my-agent-skills.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">automation</span>
+        </div>
+        <h2>MY-AGENT-SKILLS: por qué creé mi propio sistema de agents para opencode</h2>
+        <p class="post-excerpt">
+          La idea nació de una frustración simple: cada vez que quería hacer algo específico con opencode tenía que explicarle el contexto desde cero. Así nació mi ecosistema de skills.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <!-- Post 5 -->
+      <a href="posts/2026-06-08-iam-governance-paper.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">iam</span>
+        </div>
+        <h2>Escribí un paper sobre IAM Governance: esto es lo que aprendí</h2>
+        <p class="post-excerpt">
+          Me senté a escribir una guía breve sobre gobierno de identidades y terminé con un paper de 12 secciones. Reflexiones personales sobre lo que descubrí investigando.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <!-- Post 6 -->
+      <a href="posts/2026-06-08-prep-ekoparty.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">carrera</span>
+        </div>
+        <h2>Ekoparty 2026: mi preparación para dar una charla</h2>
+        <p class="post-excerpt">
+          El año pasado me rechazaron del CFP. Este año estoy laburando en serio: paper, abstract, estructura de la charla y slides. El proceso documentado paso a paso.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <!-- Post 7 -->
+      <a href="posts/2026-06-08-obsidian-personal-vault.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">productividad</span>
+        </div>
+        <h2>Obsidian y mi vault Personal-Vault: así organizo mi conocimiento</h2>
+        <p class="post-excerpt">
+          Migré desde Notion buscando control sobre mis notas: archivos de texto plano en mi disco, sin suscripciones, sin que nadie use mi información sin permiso. Así armé mi vault.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <!-- Post 8 -->
+      <a href="posts/2026-06-08-trabajo-iam-netiq.html" class="post-card">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">iam</span>
+        </div>
+        <h2>Así trabajo en IAM: identidades, accesos y la suite NetIQ</h2>
+        <p class="post-excerpt">
+          Cómo es mi día a día como responsable de identidades y accesos para distintas empresas usando la suite de NetIQ: gobierno, certificaciones, PAM y automatización.
+        </p>
+        <span class="read-more">leer <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="blog-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var input = document.getElementById('searchInput');
+      var cards = document.querySelectorAll('.post-card');
+      var noResults = document.getElementById('noResults');
+
+      if (!input || !cards.length || !noResults) {
+        console.warn('Search: missing elements', { input: !!input, cards: cards.length, noResults: !!noResults });
+        return;
+      }
+
+      function filterPosts() {
+        var q = input.value.toLowerCase().trim();
+        var visibleCount = 0;
+
+        for (var i = 0; i < cards.length; i++) {
+          var card = cards[i];
+          var title = card.querySelector('h2');
+          var excerpt = card.querySelector('.post-excerpt');
+          var tag = card.querySelector('.tag');
+          var dateSpan = card.querySelector('.post-meta span:first-child');
+
+          if (!title || !excerpt || !tag || !dateSpan) continue;
+
+          var text = (title.textContent + ' ' + excerpt.textContent + ' ' + tag.textContent + ' ' + dateSpan.textContent).toLowerCase();
+          var match = text.indexOf(q) !== -1;
+
+          if (!q || match) {
+            card.style.display = '';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        }
+
+        noResults.style.display = (q && visibleCount === 0) ? 'block' : 'none';
+      }
+
+      input.addEventListener('input', filterPosts);
+      input.addEventListener('search', filterPosts);
+    });
+  </script>
+
+</body>
+</html>

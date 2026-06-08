@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ekoparty 2026: mi preparación para dar una charla — lcampassi</title>
+  <meta name="description" content="El proceso de preparar un paper, abstract y charla para la conferencia de seguridad más importante de Argentina." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;--red-dim:#cc1133;--red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);--red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;--bg-card:#111;--bg-hover:#1a1a1a;
+      --border:#222;--border-red:#331115;
+      --text:#ddd;--text-dim:#888;--text-muted:#555;
+    }
+
+    .container{max-width:720px;margin:0 auto;padding:0 20px}
+
+    .post-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .post-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .post-nav .brand{font-size:.85rem;font-weight:700}
+    .post-nav .brand span{color:var(--red)}
+    .post-nav a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .post-nav a:hover{color:var(--text)}
+    .post-nav .btn-blog{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .post-nav .btn-blog:hover{background:var(--red-dim)}
+
+    .post-article{padding-top:100px;padding-bottom:60px}
+    .post-header{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+    .post-header .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:12px;
+    }
+    .post-header .post-meta .tag{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-header h1{font-size:1.5rem;font-weight:700;line-height:1.3}
+    .post-header .reading-time{
+      margin-top:10px;font-size:.72rem;color:var(--text-muted);
+    }
+
+    .post-content{font-size:.88rem;color:var(--text)}
+    .post-content p{margin-bottom:18px}
+    .post-content h2{
+      font-size:1.1rem;font-weight:600;margin:32px 0 12px;
+      color:var(--text);
+    }
+    .post-content h3{
+      font-size:.95rem;font-weight:600;margin:24px 0 10px;
+      color:var(--text-dim);
+    }
+    .post-content ul,.post-content ol{
+      margin:0 0 18px 24px;
+    }
+    .post-content li{margin-bottom:6px}
+    .post-content code{
+      background:var(--bg-card);padding:2px 6px;border-radius:3px;
+      font-size:.82rem;border:1px solid var(--border);
+    }
+    .post-content pre{
+      background:var(--bg-card);padding:16px;border-radius:6px;
+      overflow-x:auto;margin-bottom:18px;
+      border:1px solid var(--border);
+      font-size:.8rem;line-height:1.5;
+    }
+    .post-content pre code{background:none;border:none;padding:0}
+    .post-content blockquote{
+      border-left:3px solid var(--red);padding:10px 16px;
+      margin:0 0 18px;background:var(--red-glow);
+      color:var(--text-dim);font-size:.85rem;
+      border-radius:0 4px 4px 0;
+    }
+    .post-content a{color:var(--red);border-bottom:1px solid transparent;transition:border-color .2s}
+    .post-content a:hover{border-color:var(--red)}
+    .post-content hr{
+      border:none;height:1px;background:var(--border);margin:30px 0;
+    }
+
+    .post-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .post-footer a{color:var(--text-dim)}
+    .post-footer a:hover{color:var(--red)}
+
+    @media(max-width:600px){
+      .post-header h1{font-size:1.2rem}
+      .post-content{font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="post-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div>
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">carrera</span>
+        </div>
+        <h1>Ekoparty 2026: mi preparación para dar una charla</h1>
+        <p class="reading-time">~ 6 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          El año pasado recibí el mail que no quería recibir. El CFP de Ekoparty 2025
+          me había rechazado. No fue sorpresa — era mi primera vez mandando un paper,
+          sabía que estaba crudo — pero igual pegó. Leer ese "gracias por participar,
+          lamentamos comunicarte..." te deja pensando si realmente tenés algo para
+          decir en esta industria.
+        </p>
+
+        <p>
+          Me tomé un día para procesarlo. Al otro día ya estaba pensando en cómo
+          mejorar. No es la primera vez que me rechazan algo, ni va a ser la última.
+          La pregunta no es si te cae un rechazo, sino qué hacés después. En mi caso,
+          lo usé como roadmap: todo lo que estuvo flojo en el paper del 2025 lo anoté
+          y me puse a trabajar en eso durante el año.
+        </p>
+
+        <h2>El plan</h2>
+
+        <p>
+          Arranqué 2026 con un objetivo concreto y una hoja de ruta. No quería mandar
+          un paper "mejorado" a último momento. Quería armar algo sólido desde la
+          base, con tiempo, iterando. Dividí el proceso en cuatro etapas:
+        </p>
+
+        <ol>
+          <li><strong>Paper técnico:</strong> escribir todo el contenido sin pensar en el formato.</li>
+          <li><strong>Abstract:</strong> destilar la idea central en unos pocos párrafos.</li>
+          <li><strong>Estructura de la charla:</strong> timeline minuto a minuto.</li>
+          <li><strong>Presentación visual:</strong> slides que acompañen, no que distraigan.</li>
+        </ol>
+
+        <h2>1. El paper técnico</h2>
+
+        <p>
+          Acá arrancó todo. Sin paper no hay charla, y sin contenido sólido no hay
+          paper que valga. Me senté a escribir todo lo que sabía del tema: técnica,
+          contexto, experimentos, datos. Sin preocuparme por la extensión ni por si
+          sonaba bien. Lo importante era volcar el conocimiento crudo.
+        </p>
+
+        <p>
+          Después vino la poda. Sacar lo redundante, ordenar la narrativa, agregar
+          referencias. El paper final quedó mucho más ajustado que el del año
+          anterior. Le pedí feedback a un par de colegas de confianza, y cada
+          devolución lo mejoró. El proceso me llevó aproximadamente dos meses,
+          escribiendo y reescribiendo secciones enteras.
+        </p>
+
+        <blockquote>
+          "Si no podés explicarlo bien en un paper, no vas a poder explicarlo bien
+          en el escenario."
+        </blockquote>
+
+        <h2>2. El abstract</h2>
+
+        <p>
+          Para mí esta fue la parte más difícil. Tenés que vender la idea en dos o
+          tres párrafos. Si el abstract no engancha, nadie llega al paper. Acá no
+          alcanza con tener contenido bueno: hay que comunicar por qué importa.
+        </p>
+
+        <p>
+          Reescribí el abstract unas quince veces. Le mostré versiones a gente que
+          no está en seguridad para ver si les parecía interesante. Si alguien de
+          afuera le encuentra la punta, el revisor también. Al final encontré el
+          ángulo justo: no es solo lo que hice, sino por qué debería importarle al
+          resto.
+        </p>
+
+        <h2>3. La estructura de la charla</h2>
+
+        <p>
+          Con el paper aprobado virtualmente (mentira, pero la confianza ayuda),
+          pasé a diseñar la charla en el tiempo real. Una cosa es escribir, otra
+          muy distinta es pararse frente a un auditorio. Acá el medio cambia el
+          mensaje.
+        </p>
+
+        <p>
+          Armé un timeline minuto a minuto: apertura, contexto, demo, technical
+          deep dive, cierre. Cada bloque con su duración exacta. Lo que sobraba del
+          paper lo dejé en el paper; en la charla menos es más. Calculé incluso
+          tiempo para preguntas y margen para imprevistos.
+        </p>
+
+        <p>
+          Después lo ensayé. Agarré un cronómetro y lo recité en voz alta varias
+          veces. Al principio no entraba en el tiempo. Fui ajustando, cortando,
+          reemplazando ejemplos largos por uno más preciso. Hasta que cerró.
+        </p>
+
+        <h2>4. La presentación visual</h2>
+
+        <p>
+          Las slides son lo último que hago, justamente porque son lo menos
+          importante. Si la charla está bien estructurada, las slides solo
+          acompañan. Si la charla no está bien estructurada, las slides no la van
+          a salvar.
+        </p>
+
+        <p>
+          Mi regla: una idea por slide. Nada de paredes de texto. Código solo
+          cuando sea necesario, y siempre resaltado. Diagramas y capturas donde
+          aporten. El estilo visual es consistente: fondo oscuro, tipografía mono,
+          acentos en rojo. Nada que distraiga de lo que estoy diciendo.
+        </p>
+
+        <h2>Documentar el proceso</h2>
+
+        <p>
+          Una decisión que tomé desde el principio fue documentar todo. Cada
+          borrador, cada versión del abstract, cada feedback, cada ensayo. No solo
+          para tener un registro, sino porque creo que el proceso de preparar una
+          charla es valioso en sí mismo. Hay mucha gente que quiere dar su primera
+          charla pero no sabe por dónde arrancar. Si algún día armo una guía o
+          comparto estos apuntes, ojalá le sirva a alguien más.
+        </p>
+
+        <p>
+          Y si este año tampoco queda seleccionado? Va a doler de nuevo, obvio.
+          Pero cuando arranqué el 2026 no sabía un montón de cosas que ahora sé.
+          Aprendí a escribir mejor, a estructurar una narrativa, a venderme mejor.
+          Eso ya es ganancia. Si además queda seleccionado, mejor.
+        </p>
+
+        <hr />
+
+        <p>
+          <em>
+            Post escrito durante el proceso de preparación. Si te interesa el
+            tema, seguí el blog — voy a ir subiendo actualizaciones a medida que
+            avance el CFP.
+          </em>
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
