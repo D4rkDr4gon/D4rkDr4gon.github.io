@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi migración a Wayland con Qtile: cuando planificar anticipado rinde — lcampassi</title>
+  <meta name="description" content="Cómo migré de X11 a Wayland con Qtile sin morir en el intento. La historia de una migración que salió bien porque ya estaba pensada desde antes." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'JetBrains Mono','Fira Code',monospace;
+      background:#0a0a0a;
+      color:#ddd;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    strong{color:var(--red)}
+
+    :root{
+      --red:#ff2244;--red-dim:#cc1133;--red-dark:#881122;
+      --red-glow:rgba(255,34,68,0.1);--red-glow-strong:rgba(255,34,68,0.2);
+      --bg:#0a0a0a;--bg-card:#111;--bg-hover:#1a1a1a;
+      --border:#222;--border-red:#331115;
+      --text:#ddd;--text-dim:#888;--text-muted:#555;
+    }
+
+    .container{max-width:720px;margin:0 auto;padding:0 20px}
+
+    .post-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.88);
+      border-bottom:1px solid var(--border);
+    }
+    .post-nav .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:52px;
+    }
+    .post-nav .brand{font-size:.85rem;font-weight:700}
+    .post-nav .brand span{color:var(--red)}
+    .post-nav a{
+      font-size:.68rem;color:var(--text-dim);padding:6px 10px;border-radius:4px;
+      transition:color .2s;
+    }
+    .post-nav a:hover{color:var(--text)}
+    .post-nav .btn-blog{
+      color:#fff;padding:6px 14px;border-radius:4px;background:var(--red);font-weight:600;
+    }
+    .post-nav .btn-blog:hover{background:var(--red-dim)}
+
+    .post-article{padding-top:100px;padding-bottom:60px}
+    .post-header{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+    .post-header .post-meta{
+      display:flex;align-items:center;gap:12px;
+      font-size:.68rem;color:var(--text-muted);
+      margin-bottom:12px;
+    }
+    .post-header .post-meta .tag{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:2px 8px;border-radius:3px;
+      background:var(--red-glow);color:var(--red);
+      border:1px solid var(--border-red);
+    }
+    .post-header h1{font-size:1.5rem;font-weight:700;line-height:1.3}
+    .post-header .reading-time{
+      margin-top:10px;font-size:.72rem;color:var(--text-muted);
+    }
+
+    .post-content{font-size:.88rem;color:var(--text)}
+    .post-content p{margin-bottom:18px}
+    .post-content h2{
+      font-size:1.1rem;font-weight:600;margin:32px 0 12px;
+      color:var(--text);
+    }
+    .post-content h3{
+      font-size:.95rem;font-weight:600;margin:24px 0 10px;
+      color:var(--text-dim);
+    }
+    .post-content ul,.post-content ol{
+      margin:0 0 18px 24px;
+    }
+    .post-content li{margin-bottom:6px}
+    .post-content code{
+      background:var(--bg-card);padding:2px 6px;border-radius:3px;
+      font-size:.82rem;border:1px solid var(--border);
+    }
+    .post-content pre{
+      background:var(--bg-card);padding:16px;border-radius:6px;
+      overflow-x:auto;margin-bottom:18px;
+      border:1px solid var(--border);
+      font-size:.8rem;line-height:1.5;
+    }
+    .post-content pre code{background:none;border:none;padding:0}
+    .post-content blockquote{
+      border-left:3px solid var(--red);padding:10px 16px;
+      margin:0 0 18px;background:var(--red-glow);
+      color:var(--text-dim);font-size:.85rem;
+      border-radius:0 4px 4px 0;
+    }
+    .post-content a{color:var(--red);border-bottom:1px solid transparent;transition:border-color .2s}
+    .post-content a:hover{border-color:var(--red)}
+    .post-content hr{
+      border:none;height:1px;background:var(--border);margin:30px 0;
+    }
+
+    .post-footer{
+      text-align:center;padding:32px 0;
+      border-top:1px solid var(--border);
+      color:var(--text-muted);font-size:.72rem;
+    }
+    .post-footer a{color:var(--text-dim)}
+    .post-footer a:hover{color:var(--red)}
+
+    @media(max-width:600px){
+      .post-header h1{font-size:1.2rem}
+      .post-content{font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="post-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div>
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-08</span>
+          <span class="tag">infra</span>
+        </div>
+        <h1>Mi migración a Wayland con Qtile: cuando planificar anticipado rinde</h1>
+        <p class="reading-time">~ 5 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Hace unos meses tomé la decisión de migrar mi sesión de Qtile de X11 a Wayland. No fue una
+          decisión de un día para el otro, ni la típica "vamos a ver qué pasa si cambio el backend".
+          Venía siguiendo el desarrollo de Qtile 0.36+ con soporte nativo de Wayland via wlroots, y
+          sabía que eventualmente iba a dar el salto. La pregunta no era si iba a migrar, sino
+          <strong>cómo hacerlo para que no duela</strong>.
+        </p>
+
+        <p>
+          Spoiler: no dolió tanto. Y no fue porque sea un genio de la configuración, sino porque
+          desde el principio armé mi entorno pensando que algún día iba a tener que convivir con
+          los dos backends.
+        </p>
+
+        <h2>La decisión: por qué Wayland</h2>
+
+        <p>
+          No me movía una necesidad urgente. X11 funcionaba bien. Picom con blur se veía genial,
+          Flameshot para capturas, todo andaba. Pero había cosas que me molestaban cada vez más:
+          el tearing en video, la falta de soporte nativo de HDR, la imposibilidad de tener
+          fracciones de escala en monitores mixtos. Y sobre todo, el hecho de que X11 es un
+          protocolo que tiene cuarenta años y se nota. Wayland no es perfecto, pero es el futuro
+          y todos los proyectos grandes se están moviendo para allá.
+        </p>
+
+        <p>
+          Además, Qtile ya tenía soporte Wayland estable. Si mi window manager lo bancaba, no
+          había excusa para no probarlo.
+        </p>
+
+        <h2>La jugada maestra: dual-backend desde el día uno</h2>
+
+        <p>
+          Cuando armé mis dotfiles, hace tiempo, tomé una decisión que después me salvaría:
+          <strong>todo lo que no dependiera del backend lo separé</strong>. Los keybindings, los
+          grupos, los layouts, las screens — todo eso vive en archivos compartidos que Qtile
+          carga igual en X11 que en Wayland. Lo único que cambia es el autostart y algunos
+          componentes específicos:
+        </p>
+
+        <pre>
+X11:                          Wayland:
+  Polybar  (barra)              Waybar   (barra)
+  Picom    (compositor)         wlroots  (compositor nativo)
+  Nitrogen (wallpaper)          Qtile   (wallpaper nativo)
+  Flameshot (screenshots)       grim+slurp (screenshots)
+  betterlockscreen (lock)       swaylock (lock)
+  xrandr   (monitores)          wlr-randr (monitores)</pre>
+
+        <p>
+          El autostart detecta automáticamente qué backend está corriendo con una línea de
+          Python y arranca los componentes correspondientes:
+        </p>
+
+        <pre><code>is_wayland = 'WAYLAND_DISPLAY' in os.environ
+
+if is_wayland:
+    # Arrancar Waybar, grim+slurp, swaylock
+else:
+    # Arrancar Polybar, Picom, Nitrogen, Flameshot</code></pre>
+
+        <p>
+          La belleza de esto es que ambas configuraciones conviven. No tengo que elegir un
+          backend definitivo. Si un día necesito X11, selecciono "Qtile" en LightDM. Si quiero
+          Wayland, selecciono "Qtile (Wayland)". Los dos comparten la misma base de configuración
+          y el mismo sistema de temas.
+        </p>
+
+        <h2>Lo que sí salió mal (y cómo lo resolví)</h2>
+
+        <p>
+          No todo fue color de rosas. Varias cosas se rompieron en el camino:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Waybar no aparecía al arrancar.</strong> Resulta que el autostart no estaba
+            disparando el launch.sh de Waybar. Una boludez, pero me comí un rato hasta darme
+            cuenta de que el hook de Wayland estaba mal configurado.
+          </li>
+          <li>
+            <strong>El wallpaper no se veía.</strong> En X11 usaba Nitrogen, que obviamente no
+            funciona en Wayland. Tuve que configurar el wallpaper desde Qtile directo con
+            <code>Screen(wallpaper=...)</code>.
+          </li>
+          <li>
+            <strong>Flameshot dejó de funcionar.</strong> No es compatible con Wayland. Lo
+            reemplacé por grim + slurp, que terminó siendo incluso más rápido para mi flujo
+            de trabajo.
+          </li>
+          <li>
+            <strong>Rofi no arrancaba.</strong> Hasta que me acordé de que necesitaba la
+            versión 2.0+ para Wayland. Una vez actualizado, anduvo de diez.
+          </li>
+        </ul>
+
+        <p>
+          Cada uno de estos errores los fui resolviendo con ayuda de opencode. De hecho, fue
+          <strong>durante esta migración que nació la idea de crear el agente arch-sysadmin</strong>.
+          Me di cuenta de que estaba repitiendo el mismo patrón una y otra vez: diagnosticar un
+          problema de configuración, buscar la solución, aplicarla, y después no acordarme de
+          cómo lo había resuelto si volvía a pasar. Necesitaba un contexto permanente que
+          entendiera mi sistema, mis rutas, mis herramientas. Un agente que supiera de entrada
+          que uso Qtile, que tengo dual-backend, que mi gestor de paquetes es yay, que mi editor
+          es Neovim. Ese agente se convirtió en <strong>arch-sysadmin</strong>, y hoy es mi
+          interfaz principal para todo lo que tenga que ver con mantener el sistema.
+        </p>
+
+        <h2>El estado actual</h2>
+
+        <p>
+          Hoy vivo el 80% del tiempo en Wayland. Vuelvo a X11 solo cuando necesito algo muy
+          específico que todavía no tiene equivalente en Wayland (rara vez pasa). La experiencia
+          es prácticamente idéntica porque el sistema de temas es el mismo, los keybindings son
+          los mismos, los scripts son los mismos — lo único que cambia es lo que está debajo.
+        </p>
+
+        <p>
+          El proyecto completo está documentado en mis
+          <a href="https://github.com/D4rkDr4g0n/dotfiles">dotfiles</a>, incluyendo la
+          <a href="https://github.com/D4rkDr4g0n/dotfiles/blob/main/docs/configuration/wayland.md">arquitectura de la migración</a>,
+          los componentes por backend, los scripts de detección, y la tabla de resolución de problemas.
+        </p>
+
+        <blockquote>
+          Si hay una lección que me llevo de esta migración es: diseñá tu sistema pensando en
+          que algún día vas a querer cambiarlo. La modularidad no es un lujo, es el mejor seguro
+          contra el pánico de "no sé por dónde arrancar".
+        </blockquote>
+
+        <p>
+          Wayland no es perfecto, pero está mucho más maduro de lo que la gente cree. Y con un
+          window manager que lo soporte bien, como Qtile, la migración es más cuestión de ordenar
+          componentes que de reescribir configuraciones enteras. Si estás pensando en migrar,
+          mi recomendación es: primero hacé que ambos backends convivan, después apagá X11.
+          No al revés.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="blog-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
