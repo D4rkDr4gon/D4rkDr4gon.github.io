@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Build output (deployed via GitHub Actions)
+dist/
+
+# Backup
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db

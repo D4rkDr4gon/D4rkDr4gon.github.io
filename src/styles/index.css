@@ -1,0 +1,12 @@
+/* ══════════════════════════════════════════════════════════════
+   lcampassi.com — Main Stylesheet
+   ══════════════════════════════════════════════════════════════
+   Usage: @import this file in your HTML entry point.
+   Vite handles bundling & minification automatically.
+   ══════════════════════════════════════════════════════════════ */
+
+@import './_variables.css';
+@import './_reset.css';
+@import './_base.css';
+@import './_components.css';
+@import './_media.css';

@@ -1,0 +1,33 @@
+/* ══════════════════════════════════════════════
+   Design Tokens
+   ══════════════════════════════════════════════ */
+:root {
+  /* Brand */
+  --red:            #ff2244;
+  --red-dim:        #cc1133;
+  --red-dark:       #881122;
+  --red-glow:       rgba(255, 34, 68, 0.1);
+  --red-glow-strong: rgba(255, 34, 68, 0.2);
+
+  /* Surfaces */
+  --bg:             #0a0a0a;
+  --bg-card:        #111;
+  --bg-hover:       #1a1a1a;
+
+  /* Borders */
+  --border:         #222;
+  --border-red:     #331115;
+
+  /* Text */
+  --text:           #ddd;
+  --text-dim:       #888;
+  --text-muted:     #555;
+
+  /* Spacing / Radii */
+  --radius:         6px;
+  --container-max:  960px;
+  --nav-height:     52px;
+
+  /* Fonts */
+  --font-mono:      'JetBrains Mono', 'Fira Code', monospace;
+}
