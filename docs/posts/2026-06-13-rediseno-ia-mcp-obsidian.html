@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>De 29 a 7: el rediseño de mis inteligencias artificiales — lcampassi</title>
+  <meta name="description" content="Cómo pasé de 29 agentes que se pisaban entre sí a 7 que funcionan como corresponde. Skills reescritas, vault ordenado, y un ecosistema que hoy puede usar cualquiera." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-13</span>
+          <span class="tag">automation</span>
+        </div>
+        <h1>De 29 a 7: el rediseño de mis inteligencias artificiales</h1>
+        <p class="reading-time">~ 8 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+<p>Llegué a tener 29 agentes de opencode. El problema no era la cantidad — era que la mayoría estaba al pedo.</p>
+
+<p>Tenía agentes que había creado porque "capaz los usaba después" y nunca los usé. Tenía un MCP entero configurado para consultar modelos de Ollama, cuando opencode ya permite definir modelos directamente en <code>opencode.jsonc</code> sin necesidad de un MCP. Tenía solapamientos ridículos: un agente que documentaba usando <code>obsidian-manager</code> en Windows, otro que hacía exactamente lo mismo en Linux, y ambos eran subagentes de un agente principal de desarrollo. 3 agentes para hacer lo que tendría que hacer 1.</p>
+
+<p>El ecosistema era un reflejo de mi forma de trabajar en ese momento: crear antes que pensar. En vez de preguntarme "esto realmente lo necesito?", creaba el agente, creaba la skill, configuraba el MCP, y a otra cosa. Después terminaba con 29 agentes, skills a medio escribir, y un montón de cosas raras que no valían la pena mantener.</p>
+
+<p>En un momento tuve que parar y hacer limpieza.</p>
+
+<h2>El primer paso: cortar lo que sobra</h2>
+
+<p>Agarré los 29 agentes, los puse en una tabla y pregunté por cada uno: "esto que resuelve, lo resuelve bien?". La respuesta casi siempre era no. Había agentes duplicados, agentes que nunca usé, agentes que habían quedado de experimentos, y MCPs que no tenían sentido (como el de Ollama, que fue lo primero que voló).</p>
+
+<p>Reduje todo a 7 agentes primarios, cada uno con un dominio claro y sin pisarse:</p>
+
+<ul>
+  <li><strong>Prometeo</strong> — desarrollo: Python, Go, Rust, JS, scripting, CI/CD</li>
+  <li><strong>Ares</strong> — ofensivo: pentesting, bug bounty, CTF</li>
+  <li><strong>Atenea</strong> — defensivo: CSIRT, forense, blue team, threat intel</li>
+  <li><strong>Atlas</strong> — Linux: Arch Linux, administración, redes</li>
+  <li><strong>Hestia</strong> — Windows: Windows 11, servicios, WSL</li>
+  <li><strong>Dédalo</strong> — laboral: IDM/NAM, certificados, drivers</li>
+  <li><strong>Hefesto</strong> — creador de agentes y skills</li>
+</ul>
+
+<p>7 dominios, cero superposición. Adentro de cada agente, las skills necesarias y nada más. Lo que no se usa, no existe.</p>
+
+<h2>Refinar las skills: que hagan lo que quiero, como quiero</h2>
+
+<p>Con los agentes definidos, el paso siguiente fue revisar cada skill. No alcanzaba con que existieran — tenían que hacer exactamente lo que yo quería, de la manera que yo quería. Eso implicó reescribir muchas desde cero, ajustar permisos, y sobre todo sacar todo lo que estaba hardcodeado.</p>
+
+<p>Cada skill pasó a tener instrucciones precisas: qué herramientas priorizar, qué convenciones seguir, qué precauciones tomar. Nada de ejemplos genéricos. Si la skill es de backups, sabe que uso restic con cifrado age. Si es de redes, sabe que uso nftables. Si es de Docker, sabe que uso Podman.</p>
+
+<p>Las skills dejaron de ser documentación wishful thinking y pasaron a ser el manual de uso real de mi sistema.</p>
+
+<h2>El vault: el otro frente de batalla</h2>
+
+<p>En paralelo al rediseño de agentes y skills, tenía un problema con Babilonia, mi vault de Obsidian. 1369 notas, más de 2600 tags, pero estaba medio horrible. Las notas no tenían un formato consistente, buscar era complicado, y cada agente escribía en el vault como se le ocurría.</p>
+
+<p>Decidí que si iba a rehacer el ecosistema, el vault también tenía que estar a la altura. Los agentes necesitaban una forma confiable de trabajar con la base de conocimiento, y para eso había que poner orden.</p>
+
+<p>Lo que hice fue:</p>
+
+<ul>
+  <li><strong>Un script de Python para generar IDs únicos.</strong> Cada nota nueva recibe un ID tipo <code>MAN-001237</code> que la identifica de forma única. El script lleva el registro centralizado y garantiza que no haya colisiones. Los agentes lo llaman cada vez que crean una nota.</li>
+  <li><strong>Búsquedas más complejas.</strong> Antes los agentes buscaban con <code>rg</code> o con la REST API y listo. Ahora pueden combinar filtros de path, contenido y tags en una sola consulta, y el skill elige el mejor canal para resolverla (filesystem, REST o MCP).</li>
+  <li><strong>Un template obligatorio para todas las notas.</strong> Toda nota nueva sigue la misma estructura: frontmatter con ID, nombre, tags y fecha de creación, sección de objetivo, sección de descripción. El skill se encarga de cargar el template, reemplazar los placeholders y completar las secciones. El agente no puede saltearse el formato.</li>
+  <li><strong>Todo por variables de entorno.</strong> Rutas absolutas quemadas en el código? Borradas. Todo lo que antes estaba hardcodeado pasó a variables de entorno documentadas en <code>ENV-VARS.md</code>. La skill no tiene una sola ruta fija.</li>
+</ul>
+
+<p>El MCP que terminé usando no fue el de Ollama (que voló al toque), sino el del plugin <code>obsidian-local-rest-api</code>. Ahí sí tenía sentido: me permitió que los agentes abrieran notas en la UI de Obsidian, hicieran búsquedas semánticas con filtros combinados, y escribieran notas siguiendo el template sin poder saltearse el proceso.</p>
+
+<h2>Lo inesperado: ahora cualquiera puede usarlos</h2>
+
+<p>Cuando pasé todo a variables de entorno y saqué los hardcodes, pasó algo que no había planeado. Cualquier persona puede tomar mis agentes, mis skills, mi configuración de MCP, cambiar las variables de entorno que apunten a sus propias rutas, y tener el ecosistema funcionando en su máquina sin tocar una línea de código.</p>
+
+<p>No era el objetivo, pero terminó siendo el resultado más importante. Al sacar todo lo que era específico de mi máquina y documentarlo en variables, el ecosistema pasó de ser "mi configuración personal" a ser "un sistema que cualquiera puede usar para sus propios proyectos".</p>
+
+<h2>Lo que aprendí</h2>
+
+<p>La limpieza de 29 a 7 agentes me dejó 3 cosas claras:</p>
+
+<p><strong>1. Si creaste algo "por las dudas", ya sobra.</strong> Los agentes, skills y MCPs que creé pensando "capaz los uso después" nunca los usé. Ocupaban espacio, sumaban complejidad y no aportaban nada. Hoy solo existe lo que uso. Si aparece una necesidad nueva, la resuelvo con lo que tengo o creo algo puntual.</p>
+
+<p><strong>2. Hardcode es deuda técnica disfrazada de practicidad.</strong> Poner una ruta absoluta porque "total es mi máquina" parece práctico hasta que tenés que cambiarla 47 veces porque moviste una carpeta. Pasarlo todo a variables de entorno fue un laburo, pero hoy cualquier cosa se cambia en un solo lugar y los 7 agentes lo reflejan al toque.</p>
+
+<p><strong>3. El vault es la base de todo.</strong> De nada sirven 7 agentes con skills perfectas si la base de conocimiento es un desorden. Invertir en que las IAs puedan trabajar bien con el vault — IDs, templates, búsquedas complejas — fue lo que más impacto tuvo en la calidad del resultado final.</p>
+
+<p>Hoy tengo 7 agentes, skills que hacen lo que quiero como quiero, un vault ordenado, y cero cosas al pedo. Si alguien más quiere usar esto, puede. Las variables de entorno están documentadas, los templates existen, el MCP está configurado. Solo necesita cambiar las rutas y ya.</p>
+
+<p>Debería haber hecho esta limpieza mucho antes. Pero bueno, mejor tarde que nunca.</p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
