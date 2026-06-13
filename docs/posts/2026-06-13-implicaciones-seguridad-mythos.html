@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Las implicaciones de seguridad de los modelos Mythos de Anthropic — lcampassi</title>
+  <meta name="description" content="Por qué los modelos Mythos están tan regulados, qué encontró Project Glasswing en miles de proyectos, y cómo funciona su arquitectura de seguridad. Resumen objetivo." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-13</span>
+          <span class="tag">seguridad</span>
+        </div>
+        <h1>Las implicaciones de seguridad de los modelos Mythos de Anthropic</h1>
+        <p class="reading-time">~ 7 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+<p>Los modelos Mythos de Anthropic no son una actualizacion incremental de la linea Opus. Son un escalon por encima, y su capacidad para encontrar y explotar vulnerabilidades de software los coloca en una categoria distinta desde el punto de vista regulatorio. Este articulo resume los hechos: que encontraron, como funcionan sus salvaguardas, y por que estan tan controlados.</p>
+
+<h2>Que es Mythos</h2>
+
+<p>Mythos es la linea de modelos mas capaces de Anthropic, por encima de Opus. El primer modelo de esta familia, <strong>Claude Mythos Preview</strong>, se anuncio en abril de 2026 como un modelo de acceso restringido, disenado especificamente para tareas de ciberseguridad defensiva. No era un chatbot mejorado: era un modelo entrenado para leer codigo fuente, encontrar vulnerabilidades y, en algunos casos, construir exploits funcionales de forma autonoma.</p>
+
+<p>En junio de 2026, Anthropic lanzo dos variantes del mismo modelo base:</p>
+
+<ul>
+  <li><strong>Claude Fable 5</strong> — acceso publico, con clasificadores de seguridad que desvian ciertas consultas a Opus 4.8</li>
+  <li><strong>Claude Mythos 5</strong> — mismo modelo base, con salvaguardas reducidas en areas especificas, acceso restringido a socios de Project Glasswing</li>
+</ul>
+
+<p>Ambos modelos comparten los mismos pesos. La diferencia no esta en la capacidad, sino en las capas de seguridad que los envuelven.</p>
+
+<h2>Project Glasswing</h2>
+
+<p>Project Glasswing es una coalicion de empresas de tecnologia y seguridad lanzada por Anthropic para usar Mythos con fines defensivos. Sus miembros incluyen a Amazon Web Services, Apple, Broadcom, Cisco, CrowdStrike, Google, JPMorganChase, la Linux Foundation, Microsoft, NVIDIA y Palo Alto Networks.</p>
+
+<p>Anthropic comprometio 100 millones de dolares en creditos de uso para los participantes y 4 millones en donaciones a organizaciones de seguridad de codigo abierto. El objetivo era claro: encontrar y parchear vulnerabilidades en infraestructura critica antes de que atacantes pudieran explotarlas.</p>
+
+<h2>Que encontro Mythos</h2>
+
+<p>Los resultados de Project Glasswing se hicieron publicos en mayo de 2026. En su primer mes, Mythos Preview descubrio de forma autonoma mas de <strong>10,000 vulnerabilidades de severidad alta y critica</strong> en cientos de proyectos de software.</p>
+
+<p>Algunos datos concretos reportados por los participantes:</p>
+
+<ul>
+  <li><strong>Cloudflare</strong> reporto 2,000 bugs encontrados, incluyendo 400 de severidad alta o critica. La tasa de falsos positivos del modelo fue menor que la de evaluadores humanos.</li>
+  <li><strong>Mozilla</strong> utilizo Mythos para encontrar y parchear 271 vulnerabilidades en Firefox 150, diez veces mas hallazgos que las pruebas realizadas previamente con Claude Opus 4.6.</li>
+  <li><strong>OpenBSD y FFmpeg</strong>: Mythos encontro vulnerabilidades que llevaban decadas sin ser detectadas, incluyendo un fallo de 27 anos en una de estas bases de codigo.</li>
+  <li><strong>Curl</strong>: el creador de curl, Daniel Stenberg, reporto que Mythos encontro una vulnerabilidad unica tras analizar el proyecto.</li>
+  <li><strong>UK AISI</strong>: el AI Security Institute del Reino Unido reporto que Mythos Preview fue el primer modelo en resolver completamente sus simulaciones de ciberataques multi-paso.</li>
+</ul>
+
+<p>En total, Mythos escaneo mas de 1,000 proyectos de codigo abierto ampliamente utilizados, ademas de los sistemas propietarios de las empresas participantes. La mayoria de los participantes reportaron que el modelo multiplico por mas de 10 su tasa de deteccion de bugs en comparacion con metodos tradicionales.</p>
+
+<h2>Por que estan tan regulados</h2>
+
+<p>La razon principal por la que Mythos no se libero al publico desde el principio es lo que Anthropic denomino <strong>riesgo de doble uso</strong>: el mismo modelo que puede encontrar vulnerabilidades para parchearlas tambien puede encontrarlas para explotarlas.</p>
+
+<p>En su anuncio de abril de 2026, Anthropic declaro explicitamente que el modelo presenta un "riesgo severo para la infraestructura digital global". La empresa afirmo que Mythos podia desarrollar ciberataques funcionales de forma autonoma a un nivel profesional, y que en el corto plazo la ventaja podria estar del lado de los atacantes si no se controlaba su distribucion.</p>
+
+<p>Esta capacidad de construir exploits funcionales a partir del analisis de codigo es lo que diferencia a Mythos de modelos anteriores. No se trata solo de encontrar bugs: el modelo podia encadenar multiples vulnerabilidades y generar codigo de explotacion funcional sin intervencion humana.</p>
+
+<p>La evaluacion del UK AISI, que confirmo que Mythos era el primer modelo en completar simulaciones de ciberataques multi-paso de forma autonoma, respaldo esta caracterizacion.</p>
+
+<h2>Arquitectura de seguridad de Fable 5</h2>
+
+<p>Fable 5, la version publica, implementa un sistema de seguridad basado en clasificadores y caida a Opus 4.8. Cuando una consulta del usuario es detectada como perteneciente a uno de tres dominios sensibles, el modelo no responde directamente sino que la solicitud es manejada por Claude Opus 4.8, un modelo menos capaz, sin notificar al usuario del cambio.</p>
+
+<p>Los tres dominios monitoreados son:</p>
+
+<ul>
+  <li><strong>Ciberseguridad:</strong> tareas relacionadas con explotacion de vulnerabilidades, desarrollo de exploits y evasion de defensas</li>
+  <li><strong>Biologia y quimica:</strong> consultas relacionadas con armas biologicas o quimicas</li>
+  <li><strong>Destilacion:</strong> intentos de extraer o replicar las capacidades del modelo</li>
+</ul>
+
+<p>Anthropic afirmo que los clasificadores se activan en menos del 5% de las sesiones. La compania publico resultados de evaluaciones internas mostrando que Fable 5 cumplio con cero solicitudes daninas en un solo turno relacionadas con planificacion de ciberataques, desarrollo de exploits o evasion de defensas, incluso cuando se usaron 30 tecnicas de jailbreak publicas diferentes.</p>
+
+<p>La estrategia de seguridad general, que Anthropic denomino <strong>defense in depth</strong>, se compone de cuatro capas:</p>
+
+<ul>
+  <li>Hacer que los jailbreaks no universales sean lo mas acotados posible</li>
+  <li>Hacer que los jailbreaks universales sean costosos de producir</li>
+  <li>Monitoreo continuo con retencion de datos de 30 dias para detectar y responder a ataques exitosos</li>
+  <li>Pruebas de red teaming extensivas antes del lanzamiento</li>
+</ul>
+
+<p>En las semanas previas al lanzamiento, Anthropic coordino miles de horas de pruebas de seguridad con equipos internos, el gobierno de EE.UU., el UK AISI y organizaciones privadas externas. Ningun evaluador encontro un jailbreak universal.</p>
+
+<h2>Hallazgos de seguridad a lo largo del tiempo</h2>
+
+<p><strong>Abril 2026:</strong> Anthropic anuncia Mythos Preview como modelo restringido. La empresa declara que el modelo presenta "riesgo severo" y que no lo liberara al publico hasta implementar salvaguardas adecuadas.</p>
+
+<p><strong>Mayo 2026:</strong> Project Glasswing reporta los primeros resultados: mas de 10,000 vulnerabilidades de alta y critica severidad encontradas en el primer mes. Los participantes confirman las capacidades del modelo. Daniel Stenberg, creador de curl, publica una vision mas escéptica, senalando que Mythos solo encontro una vulnerabilidad en su proyecto y cuestionando el nivel de hype alrededor del modelo.</p>
+
+<p><strong>Junio 9, 2026:</strong> Anthropic lanza Fable 5 (publico) y Mythos 5 (restringido). La documentacion del sistema revela que Fable 5 incluye una funcion de limitacion encubierta de capacidades para usuarios que trabajan en desarrollo de IA competitivo, sin notificar al usuario. La controversia es inmediata.</p>
+
+<p><strong>Junio 10-11, 2026:</strong> Anthropic revierte la funcion de limitacion encubierta. Un portavoz declara a Fortune: "Tomamos la decision equivocada y nos disculpamos por no haber encontrado el equilibrio adecuado".</p>
+
+<p><strong>Junio 11, 2026:</strong> Se reporta que un investigador encontro un jailback en Fable 5 para generar codigo de exploits. Anthropic disputa la afirmacion, senalando que la tecnica demostrada es acotada y no constituye un jailbreak universal. La discrepancia refleja una diferencia estructural en la definicion de "jailbreak" entre la industria y los investigadores de seguridad.</p>
+
+<p><strong>Junio 12, 2026:</strong> El gobierno de EE.UU. ordena a Anthropic suspender el acceso global a Fable 5 y Mythos 5 bajo una directiva de control de exportaciones. La orden cita preocupaciones de seguridad nacional relacionadas con un jailbreak reportado por Amazon a traves del Departamento de Comercio.</p>
+
+<h2>La controversia del "secreto" de Fable 5</h2>
+
+<p>Uno de los hallazgos mas controvertidos durante el lanzamiento fue la funcion de limitacion encubierta de Fable 5. Segun la documentacion del sistema publicada por la propia Anthropic, el modelo estaba disenado para detectar cuando un usuario trabajaba en desarrollo de modelos de IA frontera competitivos y, en ese caso, aplicar silenciosamente "intervenciones para limitar la efectividad de Claude" — modificacion de prompts, vectores de direccionamiento y ajuste fino de parametros — sin informar al usuario.</p>
+
+<p>A diferencia de las otras restricciones de Fable 5, que redirigen visiblemente a Opus 4.8 con una notificacion, esta operaba sin ninguna transparencia. La reaccion de la comunidad de IA fue inmediata y negativa, incluyendo a investigadores de seguridad que normalmente apoyan a Anthropic. La empresa revirtio la medida en menos de 24 horas.</p>
+
+<p>TechCrunch senalo en ese momento que la transparencia de Anthropic en su documentacion de seguridad puede haber tenido el efecto inverso al deseado: al documentar en detalle la arquitectura de salvaguardas de Fable 5, incluyendo la existencia de jailbreaks no universales, la compania proporciono un mapa para posibles acciones regulatorias.</p>
+
+<h2>El debate sobre el acceso restringido</h2>
+
+<p>La decision de Anthropic de mantener Mythos 5 bajo acceso restringido genero debates en la industria. Algunos analistas, como el CEO de OpenAI Sam Altman, calificaron el manejo de Mythos como "marketing basado en el miedo". Otros senalaron que la existencia misma de Mythos 5 como producto separado, con salvaguardas reducidas, hacia menos claro el valor de mantenerlo restringido si los clasificadores de Fable 5 podian ser eludidos aunque sea parcialmente.</p>
+
+<p>Independientemente de las opiniones, los resultados de Project Glasswing son mediciones concretas: 10,000 vulnerabilidades encontradas, bugs de 27 anos sin detectar, tasas de falsos positivos menores que las humanas, y capacidades de explotacion autonoma confirmadas por el UK AISI. Esos datos son los que sustentan el nivel de regulacion que rodea a estos modelos.</p>
+
+<h2>Fuentes</h2>
+
+<ul>
+  <li><a href="https://www.anthropic.com/news/claude-fable-5-mythos-5" target="_blank">Anuncio de lanzamiento de Fable 5 y Mythos 5 — Anthropic (9 de junio de 2026)</a></li>
+  <li><a href="https://www.anthropic.com/glasswing" target="_blank">Project Glasswing — Anthropic</a></li>
+  <li><a href="https://daniel.haxx.se/blog/2026/05/11/mythos-finds-a-curl-vulnerability" target="_blank">"Mythos finds a curl vulnerability" — Daniel Stenberg (11 de mayo de 2026)</a></li>
+  <li><a href="https://cybersecuritynews.com/anthropics-claude-mythos-preview-0-days" target="_blank">"Mythos Preview Uncovers 10,000+ 0-Days" — Cybersecurity News (23 de mayo de 2026)</a></li>
+  <li><a href="https://www.anthropic.com/news/fable-mythos-access" target="_blank">Declaracion oficial de Anthropic sobre la directiva (12 de junio de 2026)</a></li>
+  <li><a href="https://techcrunch.com/2026/06/12/anthropics-safety-warnings-may-have-just-backfired" target="_blank">"Anthropic's safety warnings may have just backfired" — TechCrunch (12 de junio de 2026)</a></li>
+  <li><a href="https://dailysecurityreview.com/cyber-security/anthropic-disputes-jailbreak-claim-against-claude-fable-5" target="_blank">"Anthropic Disputes Jailbreak Claim Against Claude Fable 5" — Daily Security Review (12 de junio de 2026)</a></li>
+  <li><a href="https://www.eigent.ai/blog/claude-mythos" target="_blank">"Claude Mythos: Anthropic's Cybersecurity AI Model Explained" — Eigent (2026)</a></li>
+</ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
