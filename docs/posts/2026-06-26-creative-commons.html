@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative Commons: licencias para compartir conocimiento — lcampassi</title>
+  <meta name="description" content="Qué son las licencias Creative Commons, cómo funcionan, por qué estoy a favor del conocimiento abierto, y la historia de Aaron Swartz que marcó todo." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-26</span>
+          <span class="tag">opinion</span>
+        </div>
+        <h1>Creative Commons: licencias para compartir conocimiento</h1>
+        <p class="reading-time">~ 7 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Cuando publico algo en este blog, cuando subo un script a GitHub o cuando comparto
+          una configuracion de mi dotfiles, no me interesa que la gente me pida permiso para
+          usarlo. Quiero que lo usen, que lo modifiquen, que aprendan de ello. Pero tambien
+          quiero que me reconozcan el laburo si lo copian, y quiero evitar que alguien se
+          cuelgue y lo venda como propio sin agregar valor.
+        </p>
+
+        <p>
+          Ahí es donde entran las licencias <strong>Creative Commons</strong>. No son legalese
+          ni una moda de internet. Son herramientas legales concretas que resuelven un problema
+          real: <strong>como compartir conocimiento sin perder el control sobre tus derechos</strong>.
+        </p>
+
+        <h2>El problema de fondo</h2>
+
+        <p>
+          Por defecto, el copyright opera con logica de "todos los derechos reservados".
+          Eso significa que, en cuanto escribis algo, lo publicas o sacas una foto, nadie puede
+          reproducirlo, distribuirlo ni modificarlo sin tu permiso explicito. En el mundo analogico
+          esto tenia sentido; en internet, donde copiar es intrinseco a la plataforma, se vuelve
+          una traba absurda.
+        </p>
+
+        <p>
+          El problema se agrava con la industria editorial academica. Las universidades publicas
+          financian investigaciones con fondos de todos, los investigadores publican en revistas
+          de pago <strong>sin cobrar un centavo</strong>, y esas revistas venden el acceso a los
+          articulos a las mismas universidades por cifras obscenas. Elsevier, Springer, Wiley:
+          empresas con margenes de ganancia del 30-40% <strong>encima de laburo financiado con
+          dinero publico</strong>.
+        </p>
+
+        <p>
+          Creative Commons nace para romper exactamente esa dinamica.
+        </p>
+
+        <h2>Que es Creative Commons</h2>
+
+        <p>
+          Creative Commons es una organizacion sin fines de lucro fundada en 2001 por
+          <strong>Lawrence Lessig</strong>, <strong>Eric Eldred</strong> y
+          <strong>Hal Abelson</strong>. La idea era simple: crear un set de licencias
+          estandarizadas, gratuitas y legalmente solidas que cualquier creador pudiera usar
+          para decir "mirá, podes compartir esto, pero con estas condiciones".
+        </p>
+
+        <p>
+          Las primeras licencias se publicaron el <strong>16 de diciembre de 2002</strong>.
+          Hoy, mas de <strong>2 mil millones de obras</strong> en todo el mundo usan alguna
+          licencia CC: desde fotos en Flickr hasta codigo, musica, documentacion y papers
+          academicos completos.
+        </p>
+
+        <p>
+          La genialidad del sistema es que usa una logica de capas:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Capa legal</strong>: el texto juridico completo, valido en tribunales.
+          </li>
+          <li>
+            <strong>Capa comun</strong>: un resumen en lenguaje simple que cualquier persona
+            entiende, el "deed" de la licencia.
+          </li>
+          <li>
+            <strong>Capa de codigo</strong>: metadatos legibles por maquinas para que
+            buscadores y motores de busqueda identifiquen automaticamente los terminos.
+          </li>
+        </ul>
+
+        <p>
+          Este diseno de tres capas es una de las razones por las que CC funciono donde otros
+          intentos fallaron: le habla al abogado, al creador y al algoritmo al mismo tiempo.
+        </p>
+
+        <h2>Las licencias: de la mas permisiva a la mas restrictiva</h2>
+
+        <p>
+          Todas las licencias CC comparten un requisito basico: <strong>atribucion (BY)</strong>.
+          Siempre tenes que reconocer al autor original. A partir de ahi, podes combinarlo con
+          otros tres elementos:
+        </p>
+
+        <ul>
+          <li>
+            <strong>SA (ShareAlike)</strong>: si modificar o adaptas la obra, tenes que
+            distribuirla bajo la misma licencia. Es el mismo principio del copyleft en
+            software.
+          </li>
+          <li>
+            <strong>NC (NonCommercial)</strong>: solo permite usos no comerciales.
+          </li>
+          <li>
+            <strong>ND (NoDerivatives)</strong>: no permite modificaciones ni adaptaciones.
+            Solo se puede distribuir tal cual.
+          </li>
+        </ul>
+
+        <p>
+          La combinacion de estos elementos da seis licencias, ordenadas de la mas abierta
+          a la mas cerrada:
+        </p>
+
+        <ul>
+          <li><strong>CC BY</strong>: solo pedis atribucion. Lo mas libre posible.</li>
+          <li><strong>CC BY-SA</strong>: atribucion + compartir igual. La que usa Wikipedia.</li>
+          <li><strong>CC BY-NC</strong>: atribucion + solo uso no comercial.</li>
+          <li><strong>CC BY-NC-SA</strong>: atribucion + no comercial + compartir igual.</li>
+          <li><strong>CC BY-ND</strong>: atribucion + sin derivados.</li>
+          <li><strong>CC BY-NC-ND</strong>: la mas restrictiva. Solo distribucion, sin cambios,
+          sin uso comercial.</li>
+        </ul>
+
+        <p>
+          Ademas existe <strong>CC0</strong> (dedicacion al dominio publico), donde renuncias
+          a todos tus derechos, y el <strong>Public Domain Mark</strong>, para obras que ya
+          estan en dominio publico por vencimiento de copyright.
+        </p>
+
+        <h2>Por que estoy a favor</h2>
+
+        <p>
+          Porque el conocimiento no deberia tener barreras de entrada economicas. Suena
+          idealista, pero es practico: cada vez que aprendi algo clave en mi carrera fue
+          gracias a recursos que alguien compartio abiertamente. Documentacion tecnica,
+          papers, repositorios de GitHub, cursos grabados. Gente que puso su laburo a
+          disposicion de todos sin pedir nada a cambio mas que atribucion o simplemente
+          la satisfaccion de ayudar.
+        </p>
+
+        <p>
+          Publicar bajo CC no es "regalar" tu trabajo. Es elegir deliberadamente el modelo
+          de distribucion que mejor se alinea con tus valores. Yo no vivo de vender contenido
+          digital; vivo de mi laburo como consultor de IAM. Mis scripts, mis notas, mis
+          configuraciones: estan en mi GitHub con licencia CC o MIT justamente porque quiero
+          que vuelvan a la comunidad de la que salieron.
+        </p>
+
+        <p>
+          Ademas, CC resuelve un problema practico: si alguien usa algo mio sin permiso,
+          la licencia ya establece claramente que puede y que no puede hacer. No hay
+          ambiguedad. No hay "lo vi en tu blog y asumi que se podia". Esta todo escrito.
+        </p>
+
+        <h2>Aaron Swartz y el precio de luchar por el acceso abierto</h2>
+
+        <p>
+          No se puede hablar de Creative Commons sin hablar de
+          <strong>Aaron Swartz</strong>. Porque el no solo ayudo a construir las licencias
+          CC: vivio y murio por la idea de que el conocimiento tiene que ser libre.
+        </p>
+
+        <p>
+          Aaron nacio en 1986. A los 14 años co-creo <strong>RSS 1.0</strong>, el formato
+          que permitio que los blogs y sitios de noticias distribuyeran contenido de manera
+          estandarizada. A los 15 entro al equipo que estaba desarrollando las licencias
+          Creative Commons, y fue el encargado de <strong>disenar e implementar la capa
+          tecnica</strong> de las licencias — el codigo que permite que los metadatos de CC
+          sean legibles por maquinas en toda la web. Despues co-creo <strong>Reddit</strong>,
+          fundo <strong>Demand Progress</strong> (que lidero la campaña contra SOPA/PIPA), y
+          escribio el <strong>Guerilla Open Access Manifesto</strong>.
+        </p>
+
+        <p>
+          En 2010, siendo fellow del Safra Center for Institutional Corruption en Harvard,
+          Aaron conecto una computadora a la red de MIT desde un armario de cableado sin
+          llave y empezo a descargar articulos academicos de <strong>JSTOR</strong>. No lo
+          hacia para venderlos ni para beneficio personal. Su objetivo era demostrar que
+          el conocimiento academico financiado con fondos publicos debia ser accesible para
+          todos, no solo para quienes podian pagar suscripciones de miles de dolares.
+        </p>
+
+        <p>
+          JSTOR decidio no presionar cargos. Pero el gobierno federal de Estados Unidos, a
+          traves de la fiscal Carmen Ortiz, decidio procesarlo. Lo acusaron de <strong>13
+          delitos federales</strong> que incluian fraude electronico y violaciones a la
+          Computer Fraud and Abuse Act, con una pena potencial de <strong>35 años de
+          prision</strong> y un millon de dolares en multas. Le ofrecieron reduccion a 6
+          meses si se declaraba culpable. Aaron se nego.
+        </p>
+
+        <p>
+          El 11 de enero de 2013, dos dias despues de que la fiscalia rechazara su
+          contraoferta, Aaron Swartz fue encontrado sin vida en su departamento de
+          Brooklyn. Tenia 26 años.
+        </p>
+
+        <p>
+          Su muerte provoco una ola de indignacion global. Se cuestiono la
+          <strong>desproporcion</strong> de la acusacion, el rol de MIT, y el uso del
+          sistema penal contra activistas. La Camara de Representantes de Estados Unidos
+          abrio una investigacion sobre el manejo del caso. La industria editorial academica
+          empezo a moverse — lentamente — hacia modelos mas abiertos. Pero el dano ya
+          estaba hecho.
+        </p>
+
+        <blockquote>
+          "No hay justicia en seguir leyes injustas. Es hora de salir a la luz y,
+          en la gran tradicion de la desobediencia civil, declarar nuestra oposicion
+          a este robo privado de la cultura publica."
+          <br><span class="blockquote-source">— Aaron Swartz, Guerilla Open Access Manifesto, 2008</span>
+        </blockquote>
+
+        <p>
+          Aaron fue incorporado póstumamente al <strong>Internet Hall of Fame</strong>
+          en 2013, y recibio el James Madison Award de la American Library Association.
+          Su legado vive en cada paper publicado en acceso abierto, en cada licencia CC
+          aplicada a una obra, y en cada persona que se pregunta por que el conocimiento
+          que ya paga con sus impuestos sigue estando detras de un muro de pago.
+        </p>
+
+        <h2>Elegir una licencia</h2>
+
+        <p>
+          Si te copa la idea, elegir una licencia CC es facil. Creative Commons tiene un
+          <a href="https://creativecommons.org/choose/" target="_blank">selector interactivo</a>
+          en su web que te hace dos o tres preguntas y te genera el codigo HTML para
+          integrarlo en tu sitio. Solo necesitas decidir:
+        </p>
+
+        <ul>
+          <li>Si permitis uso comercial o no</li>
+          <li>Si permitis modificaciones y, si las permitis, si pedis que se compartan
+          bajo la misma licencia</li>
+        </ul>
+
+        <p>
+          En lo personal, para el contenido de este blog y mis proyectos publicos uso
+          <strong>CC BY-SA 4.0</strong>. Me parece el punto justo: cualquiera puede usar,
+          modificar y compartir mi trabajo, incluso comercialmente, siempre que me
+          atribuya y distribuya las adaptaciones bajo los mismos terminos. Es la que
+          Wikipedia usa. No invento nada nuevo.
+        </p>
+
+        <p>
+          Para codigo, uso licencias MIT o Apache 2.0, que son mas compatibles con el
+          ecosistema de desarrollo. Pero el principio es el mismo.
+        </p>
+
+        <h2>Cierre</h2>
+
+        <p>
+          Creative Commons no es solo un conjunto de licencias. Es una postura sobre como
+          funciona el conocimiento en el siglo XXI. Reconoce que el copyright tiene un
+          proposito, pero que ese proposito no es mantener la cultura encadenada hasta que
+          70 años despues de la muerte del autor pase a dominio publico.
+        </p>
+
+        <p>
+          El conocimiento se construye sobre conocimiento previo. Cada paper que leemos,
+          cada tutorial que seguimos, cada pedazo de codigo que copiamos para aprender
+          — todo eso es posible porque alguien, en algun momento, decidio compartir en
+          vez de esconder. Las licencias CC existen para que esa decision sea facil,
+          clara y legalmente firme.
+        </p>
+
+        <p>
+          Aaron Swartz lo entendio mejor que nadie. Y aunque ya no este, su lucha sigue
+          vigente: hay millones de articulos academicos detras de paywalls que deberian
+          ser accesibles, hay creadores que no saben que existen estas herramientas, y
+          hay un debate abierto sobre hasta donde llega el derecho de autor en la era
+          digital. Usar CC no lo resuelve todo, pero es un paso concreto en la direccion
+          correcta.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
