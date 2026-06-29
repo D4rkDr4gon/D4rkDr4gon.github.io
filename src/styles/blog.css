@@ -14,11 +14,6 @@
   padding: 0 32px;
 }
 
-/* Restrict post content width for readability on wide screens */
-.post-content {
-  max-width: 720px;
-}
-
 /* ─── Navigation (shared: listing + posts) ─────────────── */
 .blog-nav {
   position: fixed;
