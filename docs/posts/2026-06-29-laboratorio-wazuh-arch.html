@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Montando un laboratorio de Wazuh en Arch Linux: mi SIEM open-source — lcampassi</title>
+  <meta name="description" content="Cómo instalé y configuré Wazuh en mi laboratorio local con Docker, agents simulados y las primeras reglas de detección. Bitácora de un proyecto personal para aprender SIEM desde casa." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-06-29</span>
+          <span class="tag">homelab</span>
+        </div>
+        <h1>Montando un laboratorio de Wazuh en Arch Linux: mi SIEM open-source</h1>
+        <p class="reading-time">~ 7 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Hace un tiempo que vengo con la idea de armar un laboratorio de Wazuh en mi máquina local.
+          No solo porque es el SIEM open-source más popular del mercado, sino porque quería tener un
+          entorno real donde meter las manos sin depender de una licencia, un entorno cloud o un
+          equipo dedicado. Wazuh corre en contenedores, mi Arch tiene Docker, los agents se instalan
+          en cualquier SO, y yo tengo espacio en disco y ganas de aprender. No necesitaba nada más.
+        </p>
+
+        <p>
+          En mi lab ya tengo máquinas virtuales con Windows y Linux para pruebas, y hace rato que
+          vengo estudiando conceptos de SIEM desde los manuales que tengo en mi vault de Obsidian.
+          Pero hasta ahora todo era teoría: qué es un pipeline de normalización, cómo funcionan los
+          decoders, cómo se correlacionan eventos. Llegó el momento de ensuciarse las manos.
+        </p>
+
+        <p>
+          Este post es mi bitácora del proceso: desde la decisión de usar Wazuh hasta tener agents
+          reportando, reglas disparando y dashboards mostrando datos. Si estás pensando en hacer lo
+          mismo, espero que te sirva de referencia y de paso te ahorres algunos de los tropiezos
+          que me encontré en el camino.
+        </p>
+
+        <h2>Por qué Wazuh y no otro SIEM</h2>
+
+        <p>
+          Antes de arrancar evalué un par de alternativas. Elastic Security está muy bien pero el
+          modelo de licencias cambió y la capa gratuita se siente cada vez más limitada. Security
+          Onion es completísimo pero consume muchos recursos y está pensado para entornos de red
+          más que para un laboratorio personal. Graylog es excelente para logs pero no tiene las
+          capacidades de HIDS (Host-based Intrusion Detection) que ofrece Wazuh.
+        </p>
+
+        <p>
+          Wazuh me ganó por tres razones:
+        </p>
+
+        <ul>
+          <li><strong>Es todo en uno</strong>: SIEM, HIDS, FIM (File Integrity Monitoring), detección de vulnerabilidades, y respuesta activa en un solo stack.</li>
+          <li><strong>Docker oficial</strong>: el proyecto mantiene imágenes actualizadas y un docker-compose que levanta el stack completo en minutos.</li>
+          <li><strong>Comunidad activa</strong>: las reglas, decoders y playbooks se actualizan con frecuencia, y hay suficiente documentación y ejemplos como para no quedar colgado.</li>
+        </ul>
+
+        <p>
+          Además, Wazuh se integra de forma nativa con TheHive, Shuffle y MISP, herramientas que
+          ya tengo en mi lista de pendientes para el laboratorio. Así que fue la opción más lógica.
+        </p>
+
+        <h2>El stack de Wazuh: qué levanta cada contenedor</h2>
+
+        <p>
+          Wazuh no es un solo servicio sino un ecosistema de componentes. El docker-compose oficial
+          levanta:
+        </p>
+
+        <ul>
+          <li><strong>Wazuh Manager</strong>: el cerebro del sistema. Recibe los eventos de los agents, los procesa con decoders y reglas, y genera alertas.</li>
+          <li><strong>Wazuh Indexer</strong>: un cluster de OpenSearch que almacena y permite buscar todos los eventos y alertas.</li>
+          <li><strong>Wazuh Dashboard</strong>: la interfaz web basada en OpenSearch Dashboards, con paneles preconfigurados para visualizar alertas, eventos, FIM, vulnerabilidades, etc.</li>
+          <li><strong>Filebeat</strong>: el shipper que envía alertas del Manager al Indexer.</li>
+        </ul>
+
+        <p>
+          Opcionalmente podés agregar un agente para monitorear el propio servidor, pero yo decidí
+          dejarlo afuera para no mezclar métricas del host con las de los agents de prueba.
+        </p>
+
+        <h2>Instalación en Arch Linux: Docker Compose al rescate</h2>
+
+        <p>
+          Mi máquina corre Arch Linux (kernel 7.0.12) con Docker y Docker Compose ya instalados.
+          No tenía ningún contenedor activo, así que arranqué desde cero.
+        </p>
+
+        <p>
+          El proyecto oficial de Wazuh para Docker está en <code>wazuh/wazuh-docker</code> en GitHub.
+          Lo cloné, entré al directorio de single-node (la configuración para un solo nodo, ideal
+          para laboratorio), y antes de levantar todo configuré las variables de entorno:
+        </p>
+
+        <pre><code># Configuración básica para el docker-compose de Wazuh single-node
+export INDEXER_PASSWORD="UnaPassFuerteAca"
+export API_PASSWORD="OtraPassDistintaAca"
+
+# Índices y memoria (para un laboratorio con 22GB de RAM va sobrado)
+export OPENSEARCH_JAVA_OPTS="-Xms1g -Xmx2g"</code></pre>
+
+        <p>
+          Recomendación: no uses las contraseñas por defecto que vienen en el <code>.env</code> de
+          ejemplo. Para un laboratorio local no es crítico, pero si después querés exponerlo o
+          conectarlo con otras herramientas, mejor tener credenciales propias desde el vamos.
+        </p>
+
+        <p>
+          El levantamiento con <code>docker compose up -d</code> descarga las imágenes y arranca
+          los contenedores. La primera vez tarda unos minutos porque tiene que bajar todo, pero
+          después arranca en segundos.
+        </p>
+
+        <pre><code># Entrar al directorio de single-node
+cd wazuh-docker/single-node
+
+# Levantar el stack
+docker compose up -d
+
+# Verificar que todos los servicios estén running
+docker compose ps
+
+NAME                    STATUS
+wazuh-dashboard-1       Up
+wazuh-indexer-1         Up
+wazuh-manager-1         Up
+filebeat-1              Up</code></pre>
+
+        <p>
+          Un detalle importante: Wazuh Dashboard expone el puerto 443 para la interfaz web. En mi
+          caso tuve que verificar que no hubiera conflictos con otros servicios en ese puerto
+          (por suerte no, mi máquina no corre nada en 443). Si tenés algo ahí, podés mapear otro
+          puerto modificando el docker-compose.
+        </p>
+
+        <p>
+          Una vez que todo está verde, la interfaz web está disponible en <code>https://localhost</code>.
+          El usuario por defecto es <code>admin</code> con la contraseña que configuraste en
+          <code>INDEXER_PASSWORD</code>.
+        </p>
+
+        <blockquote>
+          Lección aprendida: el dashboard usa un certificado SSL autofirmado. No entra en pánico
+          cuando el navegador te muestre la advertencia de seguridad — es esperado. Para un lab
+          local no necesitás un certificado válido.
+        </blockquote>
+
+        <h2>Agregando agents al laboratorio</h2>
+
+        <p>
+          El corazón de Wazuh son los agents: software liviano que se instala en los endpoints a
+          monitorear y envía logs, eventos de archivos, procesos, conexiones de red y más al Manager.
+        </p>
+
+        <p>
+          Para mi laboratorio instalé agents en tres tipos de sistemas:
+        </p>
+
+        <ul>
+          <li><strong>Un contenedor Ubuntu</strong> dentro de la misma red de Docker, para pruebas controladas.</li>
+          <li><strong>Una VM con Windows 11</strong> que uso para laburar, para ver qué detecta Wazuh en un sistema del día a día.</li>
+          <li><strong>Una VM con Kali Linux</strong>, para simular actividades maliciosas y ver las alertas que genera.</li>
+        </ul>
+
+        <p>
+          La instalación del agent es simple. En el Manager, primero generás el comando de
+          instalación desde la interfaz web (Agents → Deploy new agent) o desde la API. Te da
+          un comando listo para pegar en el endpoint objetivo, con la IP del Manager y la
+          contraseña de autenticación ya incluida.
+        </p>
+
+        <pre><code># Ejemplo de comando para instalar el agent en Ubuntu
+curl -s https://packages.wazuh.com/4.x/keys/GPG-KEY-WAZUH | apt-key add -
+echo "deb https://packages.wazuh.com/4.x/apt/ stable main" | tee /etc/apt/sources.list.d/wazuh.list
+apt update && apt install wazuh-agent
+systemctl start wazuh-agent</code></pre>
+
+        <p>
+          En Windows es igual de directo: un installer MSI que pedís desde el dashboard, lo
+          ejecutás con la IP del Manager y la contraseña, y en un par de minutos el agente ya
+          está reportando. Lo bueno es que Wazuh detecta automáticamente los eventos del sistema
+          operativo: logs de seguridad, eventos de aplicación, cambios en el registro, etc.
+        </p>
+
+        <p>
+          El manager asigna automáticamente un ID a cada agente. Desde el dashboard podés ver el
+          estado de todos ellos: connected, disconnected o never connected. Si ves un agente en
+          "never connected" después de la instalación, revisá que el puerto 1514 y 1515 del manager
+          estén accesibles desde el endpoint.
+        </p>
+
+        <h2>Primeras reglas y alertas que disparé</h2>
+
+        <p>
+          Wazuh viene con un ruleset bastante completo que cubre desde ataques de fuerza bruta
+          hasta cambios en archivos críticos. Pero la gracia de tener un laboratorio es justamente
+          poder probar reglas propias y entender cómo funciona el motor de correlación.
+        </p>
+
+        <p>
+          Lo primero que hice fue crear una regla simple que alertara cada vez que alguien hiciera
+          <code>sudo su</code> en cualquiera de los agents Linux. El decoder de PAM ya captura esos
+          eventos, solo necesitaba agregar una regla que los eleve a nivel de alerta:
+        </p>
+
+        <pre><code>&lt;group name="custom,pam,"&gt;
+  &lt;rule id="100001" level="7"&gt;
+    &lt;if_sid&gt;5501&lt;/if_sid&gt;
+    &lt;field name="pam_type"&gt;authenticate&lt;/field&gt;
+    &lt;description&gt;Acceso sudo detectado en $(hostname) - usuario: $(srcuser)&lt;/description&gt;
+    &lt;group&gt;pci_dss_10.2.5,gpg13_7.1,gdpr_4_1a,&lt;/group&gt;
+  &lt;/rule&gt;
+&lt;/group&gt;</code></pre>
+
+        <p>
+          Después de guardar la regla y reiniciar el manager, probé haciendo <code>sudo su</code>
+          desde el agente Ubuntu. En menos de 10 segundos la alerta apareció en el dashboard con
+          nivel 7 (alta), incluyendo el nombre del host, el usuario que ejecutó el comando y el
+          timestamp exacto.
+        </p>
+
+        <p>
+          Otra prueba clásica: desde la VM con Kali lancé un escaneo de puertos con nmap contra
+          el manager. Wazuh lo detectó automáticamente porque el firewall del manager registró la
+          conexión y el decoder de logs del sistema lo mapeó como un evento de rechazo de conexión.
+          La regla por defecto <code>5710</code> (posible escaneo de puertos) se disparó con nivel
+          10. Si bien en un entorno real un nivel 10 merece atención inmediata, en el laboratorio
+          es genial ver que el sistema responde como esperás.
+        </p>
+
+        <h2>Lo que aprendí en el proceso</h2>
+
+        <p>
+          Como todo proyecto hands-on, hubo cosas que salieron bien y otras que no tanto. Estas
+          son las que más me marcaron:
+        </p>
+
+        <ul>
+          <li><strong>La red de Docker importa</strong>: al principio los agents no podían comunicarse con el manager porque estaban en redes distintas. Tuve que asegurarme de que los endpoints alcanzaran al manager por el puerto 1514/UDP y 1515/TCP. Para las VMs, usé la IP de mi máquina host en la red de Docker bridge.</li>
+          <li><strong>No subestimes los recursos</strong>: el stack de Wazuh completo consume aproximadamente 4GB de RAM y unos 10GB de disco. En mi máquina con 22GB no es problema, pero si tenés menos, considerá usar el modo all-in-one con recursos limitados para OpenSearch.</li>
+          <li><strong>Los agents en Windows 11 requieren configurar el firewall</strong>: el instalador no abre los puertos automáticamente. Si el agente se queda en "disconnected", revisá que el firewall de Windows no esté bloqueando la salida al manager.</li>
+          <li><strong>La personalización de regillas es adictiva</strong>: una vez que entendés la sintaxis de las reglas XML de Wazuh, empezás a querer alertar por todo. Mi recomendación: empezá con lo esencial y después expandí. No querés terminar con 200 reglas custom que nunca revisás.</li>
+        </ul>
+
+        <h2>Proximos pasos en el laboratorio</h2>
+
+        <p>
+          Tener Wazuh corriendo es solo el primer paso. En mi lista de pendientes tengo:
+        </p>
+
+        <ul>
+          <li><strong>Integrar con TheHive</strong>: que las alertas de Wazuh disparen casos automáticos en TheHive para simular un flujo SOC real.</li>
+          <li><strong>FIM (File Integrity Monitoring)</strong>: monitorear archivos críticos en los agents y detectar modificaciones no autorizadas.</li>
+          <li><strong>Active Response</strong>: configurar respuestas automáticas como bloquear una IP o aislar un agente ante una alerta de alto nivel.</li>
+          <li><strong>Vulnerability Detector</strong>: habilitar el escaneo de vulnerabilidades en los agents y ver qué CVE reporta Wazuh contra los paquetes instalados.</li>
+          <li><strong>Documentar todo en el vault</strong>: cada configuración, cada regla custom y cada integración la estoy guardando en mi Obsidian para tener una base de conocimiento consultable desde cualquier agente de opencode.</li>
+        </ul>
+
+        <p>
+          La idea es que este laboratorio se convierta en un banco de pruebas donde pueda simular
+          ataques, probar configuraciones y documentar resultados, todo desde casa. Wazuh me da la
+          base de SIEM/HIDS que necesito sin depender de licencias, y con Docker el mantenimiento
+          es mínimo.
+        </p>
+
+        <h2>Cierre: aprender haciendo</h2>
+
+        <p>
+          Podría haber seguido estudiando teoría y viendo capturas de pantalla de dashboards ajenos.
+          Pero no hay nada como tener el sistema funcionando en tu propia máquina, mandar un agente
+          a la mierda con un escaneo de nmap y ver la alerta aparecer en tu dashboard. Esa
+          inmediatez entre la acción y la detección es lo que termina de fijar los conceptos.
+        </p>
+
+        <p>
+          Si estás leyendo esto y tenés ganas de aprender SIEM pero no sabés por dónde arrancar,
+          hacete un favor: abrí una terminal, levantá Wazuh con Docker Compose, instalá un agente
+          en una VM, y empezá a mirar las alertas que ya vienen por defecto. Después empezá a
+          modificarlas. Después rompé algo. Después arreglalo. Ese ciclo no te lo da ningún curso.
+        </p>
+
+        <p>
+          En los próximos posts voy a seguir documentando cada pieza del laboratorio: la integración
+          con TheHive, las reglas custom que funcueron bien, y los errores que me hicieron perder
+          horas. Si te interesa, seguí el blog — esto recién arranca.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="blog-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
