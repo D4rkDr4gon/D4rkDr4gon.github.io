@@ -8,11 +8,15 @@
 @import './_reset.css';
 
 /* ─── Shared base ──────────────────────────────────────── */
-/* Blog uses narrower container for readability */
 .container {
-  max-width: 720px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 32px;
+}
+
+/* Restrict post content width for readability on wide screens */
+.post-content {
+  max-width: 720px;
 }
 
 /* ─── Navigation (shared: listing + posts) ─────────────── */
