@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NIST CSF 2.0: el marco que le habla al negocio — lcampassi</title>
+  <meta name="description" content="Qué es el NIST Cybersecurity Framework 2.0, qué cambió respecto a la versión 1.1 y cómo lo aplico en mi trabajo diario con identidades y accesos." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-08-02</span>
+          <span class="tag">framework</span>
+        </div>
+        <h1>NIST CSF 2.0: el marco que le habla al negocio</h1>
+        <p class="reading-time">~ 7 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          El NIST CSF me persiguió varios años antes de que le prestara atención.
+          Aparecía citado en auditorías, en slides de vendors, en los requisitos
+          de puestos que me interesaban. Siempre lo dejaba para después: un PDF
+          largo, en inglés, que en teoría ordenaba la ciberseguridad de una
+          organización y que en la práctica me dormía en la tercera página.
+        </p>
+
+        <p>
+          Hasta que este cuatrimestre en la facultad me tocó estudiarlo en serio,
+          y casi sin querer empecé a encontrarlo en mi laburo de IAM. Ahí entendí
+          lo que me venía faltando: el marco no es una lista de controles,
+          <strong>es un idioma</strong>.
+        </p>
+
+        <h2>De dónde sale y por qué existe</h2>
+
+        <p>
+          El CSF nació en 2014, empujado por una orden ejecutiva de la Casa
+          Blanca después de una seguidilla de ataques a infraestructura crítica:
+          energía, banca, salud. La idea era darle a esos sectores un lenguaje
+          común para hablar de riesgo cibernético, sin imponer controles
+          obligatorios. Salió la versión 1.0, después una 1.1 en 2018, y el
+          26 de febrero de 2024 llegó la 2.0, la revisión más grande desde
+          el inicio.
+        </p>
+
+        <p>
+          Un detalle que conviene tener presente: el marco es voluntario. Ninguna
+          ley obliga a usarlo. Pero cuando una regulación, un cliente o una
+          auditoría te piden "alineación con NIST", esto es lo que tienen
+          en la cabeza.
+        </p>
+
+        <h2>Tres piezas, una sola estructura</h2>
+
+        <p>
+          Para no perderse conviene separar el marco en tres componentes. El
+          primero es el <strong>Core</strong>, el corazón: una taxonomía de
+          resultados que cualquier organización debería poder lograr, organizada
+          en tres niveles:
+        </p>
+
+        <ul>
+          <li><strong>Funciones</strong>: las seis grandes — Gobernar, Identificar, Proteger, Detectar, Responder y Recuperar.</li>
+          <li><strong>Categorías</strong>: 22, agrupan resultados por tema dentro de cada función.</li>
+          <li><strong>Subcategorías</strong>: 106, el nivel más fino. Cada una describe un resultado deseado y concreto.</li>
+        </ul>
+
+        <p>
+          Después están los <strong>Profiles</strong>: describís el estado actual
+          de tu organización y el estado al que querés llegar. La distancia entre
+          ambos es, literalmente, tu plan de trabajo.
+        </p>
+
+        <p>
+          Y los <strong>Tiers</strong>: cuatro niveles de madurez, de Parcial a
+          Adaptativo. Acá no hay un "bien" o "mal" absoluto: una organización
+          chica puede vivir perfectamente en Tier 2, y una que procesa pagos
+          quizá necesita llegar a 4 en las funciones que la mantienen viva.
+        </p>
+
+        <h2>Qué cambió con la 2.0</h2>
+
+        <p>
+          Lo más visible: pasamos de cinco funciones a seis.
+          <strong>Gobernar</strong> (Govern) subió a primer nivel y se llevó
+          puesta la gobernanza que antes estaba desperdigada: estrategia de
+          riesgo, roles y responsabilidades, políticas, supervisión y gestión
+          del riesgo de la cadena de suministro (GV.SC).
+        </p>
+
+        <p>
+          El segundo cambio es de alcance. La 1.1 estaba pensada para
+          infraestructura crítica; la 2.0 se declara útil para cualquier
+          organización, de una PYME a un ministerio. No es marketing: NIST
+          publicó guías de inicio rápido pensadas para empresas chicas.
+        </p>
+
+        <p>
+          El tercero toca la cadena de suministro. El marco reconoce algo que
+          en el laburo vemos todo el tiempo: tu seguridad vale lo que vale la
+          del proveedor más débil que tiene acceso a tus sistemas.
+        </p>
+
+        <p>
+          En números: 5 a 6 funciones, 23 a 22 categorías, 108 a 106
+          subcategorías. Se consolidaron varias, y apareció la categoría
+          <strong>PR.AA</strong> (Identidad, Autenticación y Control de Acceso),
+          que concentró lo que antes estaba repartido entre control de acceso y
+          tecnología de protección. Para alguien que labura en IAM, esa
+          reorganización sola ya es noticia.
+        </p>
+
+        <h2>Por qué no es una checklist</h2>
+
+        <p>
+          La tentación es convertir el marco en un Excel con 106 filas y poner
+          tildes. Es la forma más rápida de no sacarle nada.
+        </p>
+
+        <p>
+          Las subcategorías describen <strong>resultados</strong>, no cómo
+          lograrlos. Decir "PR.AA-03: el acceso a los activos se gestiona,
+          aprueba, autoriza y audita según política" no te dice qué producto
+          comprar ni qué comando correr. Eso es a propósito: dos organizaciones
+          pueden cumplir el mismo resultado con herramientas y procesos
+          completamente distintos.
+        </p>
+
+        <p>
+          Para los que vienen de otros marcos, NIST publica los
+          <strong>informative references</strong>: mapeos oficiales hacia
+          ISO/IEC 27001, NIST SP 800-53, CIS Controls v8 y COBIT, entre otros.
+          Si tu empresa ya tiene ISO, el CSF te sirve como traductor, no como
+          reemplazo. Y en el Reference Tool online cada subcategoría trae
+          implementation examples, con ejemplos pensados para distintos niveles
+          de madurez.
+        </p>
+
+        <blockquote>
+          El CSF no te dice qué comprar ni cómo configurarlo. Te dice qué
+          resultados necesitás y te deja elegir el cómo.
+        </blockquote>
+
+        <h2>Cómo lo aplico en mi trabajo</h2>
+
+        <p>
+          Mi día a día es identidad: NetIQ, OneIdentity, Active Directory,
+          certificaciones de acceso, PAM. Cuando tuve que explicar por qué las
+          campañas de certificación no podían seguir siendo un ejercicio anual
+          de dos semanas, el marco me dio el vocabulario para no sonar como un
+          ingeniero pidiendo plata.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Lo que hago</th>
+              <th>Subcategoría que le corresponde</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Onboarding y offboarding automatizados, con revisión de cuentas</td>
+              <td>PR.AA-01: identidades y credenciales de usuarios, servicios y hardware gestionadas</td>
+            </tr>
+            <tr>
+              <td>Certificación periódica de accesos por dueño de aplicación</td>
+              <td>PR.AA-03: acceso a activos gestionado, aprobado, autorizado y auditado</td>
+            </tr>
+            <tr>
+              <td>Check-out/check-in de credenciales, rotación y registro de sesiones en PAM</td>
+              <td>PR.AA-05: permisos administrados con menor privilegio y separación de funciones</td>
+            </tr>
+            <tr>
+              <td>Campañas de revisión de roles alineadas con el apetito de riesgo</td>
+              <td>GV.RM: estrategia de gestión de riesgo establecida y comunicada</td>
+            </tr>
+            <tr>
+              <td>Revisión de accesos de proveedores y partners</td>
+              <td>GV.SC: gestión de riesgo de la cadena de suministro</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          Después está el uso más práctico que le encontré: los profiles como
+          gap analysis. Definís el target (cómo debería verse la identidad en
+          una organización sana), relevás el current (qué tenemos hoy, sin
+          maquillaje), y el delta es tu roadmap. Es la forma más ordenada que
+          conozco de convertir una opinión en un plan con fechas.
+        </p>
+
+        <p>
+          Y no es solo IAM. La función Responder me llevó a leer la
+          NIST SP 800-61, la guía de manejo de incidentes, y a ordenar playbooks
+          que hasta entonces eran conocimiento suelto en la cabeza de dos
+          personas. En el lab de Wazuh de mi casa, la función Detectar dejó de
+          ser teoría: ahora tengo un SIEM al que le puedo disparar eventos y
+          ver si las reglas hacen ruido cuando tienen que hacerlo.
+        </p>
+
+        <h2>El marco no te salva solo</h2>
+
+        <p>
+          Si tengo que resumir el cuatrimestre: el CSF no va a detener ningún
+          ataque por sí solo. Lo que sí hace es darte el lenguaje para que la
+          seguridad deje de ser una conversación entre dos ingenieros a las
+          2 AM y se vuelva una discusión con la gerencia sobre riesgo,
+          prioridades y presupuesto.
+        </p>
+
+        <p>
+          Hoy lo primero que hago cuando arranco un proyecto de identidad es
+          preguntarme en qué función estoy parado y a qué subcategoría le estoy
+          moviendo el marcador. Después de eso, el resto es configuración.
+        </p>
+
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://www.nist.gov/cyberframework">NIST Cybersecurity Framework — sitio oficial</a></li>
+          <li><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.spa.pdf">CSWP 29: CSF 2.0 (versión en español)</a></li>
+          <li><a href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1299.pdf">NIST SP 1299: Resource &amp; Overview Guide</a></li>
+          <li><a href="https://csrc.nist.gov/projects/cybersecurity-framework">CSF 2.0 Reference Tool</a></li>
+          <li><a href="https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final">NIST SP 800-61 Rev 2: Incident Handling Guide</a></li>
+        </ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
