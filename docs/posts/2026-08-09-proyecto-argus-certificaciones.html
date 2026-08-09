@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyecto ARGUS: mi plan para certificarme en CSIRT sin gastar plata — lcampassi</title>
+  <meta name="description" content="Cómo organicé un proyecto personal para formarme en CSIRT y DFIR: certificaciones gratuitas, un lab con Wazuh y TheHive, y un roadmap de 6 años. El plan completo para replicarlo." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-08-09</span>
+          <span class="tag">carrera</span>
+        </div>
+        <h1>Proyecto ARGUS: mi plan para certificarme en CSIRT sin gastar plata</h1>
+        <p class="reading-time">~ 8 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Cuando decidí que quería certificarme en blue team, el primer obstáculo no fue el
+          contenido. Fue el precio. BTL1 sale 500 dólares, Security+ ronda los 250. Con 21
+          años, la facultad y un sueldo de consultor, esos números eran un proyecto en sí.
+        </p>
+
+        <p>
+          Podía esperar a ahorrar. Pero el tiempo también cuenta: cada mes sin práctica era
+          un mes que no sumaba experiencia. Entonces armé una alternativa: un plan para
+          certificarme sin gastar plata, con lo que ya tenía y con lo que es gratis. Lo llamé
+          ARGUS, está documentado en mi vault de Obsidian, y este post es el plan completo
+          para que cualquiera en la misma posición lo pueda seguir.
+        </p>
+
+        <h2>El problema: las certificaciones cuestan plata</h2>
+
+        <p>
+          Hice la cuenta del camino tradicional: Security+, BTL1, CySA+. Más de mil dólares
+          para recién arrancar. No digo que no valgan la plata, digo que no estaban a mi
+          alcance en ese momento.
+        </p>
+
+        <p>
+          Lo que sí estaba al alcance: Fortinet NSE 1 a 3, gratis. MITRE ATT&amp;CK Defender,
+          gratis. Microsoft SC-900, gratis si conseguís el voucher de los Virtual Training
+          Days. Wazuh Official Training, gratis. TryHackMe SOC Level 1, en su mayoría gratis.
+          FIRST CSIRT Basic Course, gratis. Splunk Fundamentals, gratis. Sumé todo eso y me
+          di cuenta de que el problema no era la falta de plata, era la falta de un plan.
+        </p>
+
+        <h2>Qué es ARGUS</h2>
+
+        <p>
+          ARGUS es un proyecto personal de aprendizaje que armé en 2026 para
+          ordenar mi camino hacia un CSIRT certificado. Tiene cuatro piezas:
+        </p>
+
+        <ul>
+          <li>Un roadmap de 6 años, de analista SOC a CISO, con etapas, certificaciones y metas por año.</li>
+          <li>Un catálogo de certificaciones, cursos y recursos, depurado: solo lo que suma, con precio, tiempo y motivo.</li>
+          <li>Un lab casero con Wazuh, TheHive y Cortex corriendo en Docker sobre Arch Linux.</li>
+          <li>30 tareas organizadas en fases, de la F0 (fundación) a la F4 (dominio avanzado).</li>
+        </ul>
+
+        <p>
+          El nombre no es casualidad: ARGUS era el gigante de los cien ojos de la mitología
+          griega, el que vigilaba todo. Le queda bien a un proyecto de SOC.
+        </p>
+
+        <h2>El catálogo: qué prioricé y qué descarté</h2>
+
+        <p>
+          La regla que usé para el catálogo: cada certificación tiene que justificar su costo
+          o su tiempo. Con esa regla en la mesa, la lista quedó así.
+        </p>
+
+        <h3>Prioridad alta: gratis o casi gratis</h3>
+
+        <ul>
+          <li><strong>Fortinet NSE 1 a 3</strong>: gratis, una tarde cada una. Tres líneas para el CV en una semana.</li>
+          <li><strong>MITRE ATT&amp;CK Defender (MAD)</strong>: gratis, 10 a 15 horas. El framework que tenés que saber sí o sí.</li>
+          <li><strong>Microsoft SC-900</strong>: 99 dólares, o gratis con el voucher de los Virtual Training Days. Te mete en el ecosistema Microsoft.</li>
+        </ul>
+
+        <h3>Prioridad media: cuando haya presupuesto</h3>
+
+        <ul>
+          <li><strong>CompTIA Security+</strong>: el filtro de RRHH. Muchos ATS te descartan sin ese cartón.</li>
+          <li><strong>BTL1</strong>: la más práctica del mercado, 24 horas de examen real con SIEM, forense e IR.</li>
+          <li><strong>CCD de CyberDefenders</strong>: la alternativa más barata a BTL1, examen práctico de 48 horas.</li>
+        </ul>
+
+        <p>
+          Y las que descarté, con motivo. ISC2 CC dejó de ser gratis y no justifica el costo
+          contra Security+. Google Cybersecurity Certificate tiene 200 horas de contenido que
+          ya sabía. IBM Cybersecurity Analyst es demasiado básico. CS50 de Harvard es
+          introductorio. Descartar también es parte del plan: cada hora que metés en algo que
+          no te suma es una hora que le sacás a lo que sí te suma.
+        </p>
+
+        <h2>El lab: donde el cartón se vuelve experiencia</h2>
+
+        <p>
+          Las certificaciones te dan el marco. El lab te da la práctica. El mío corre en
+          Docker sobre Arch: Wazuh como SIEM, TheHive para gestión de casos, Cortex para los
+          analizadores, y VirusTotal integrado para enriquecer las alertas. El agente de Wazuh
+          monitorea mi propia máquina, así que las alertas son reales, sobre mi sistema.
+        </p>
+
+        <p>
+          La primera vez que le disparé un escaneo de nmap a mi propio host y vi la alerta
+          aparecer en el dashboard, entendí algo que ningún curso me había explicado: la
+          diferencia entre leer sobre detección y verla en vivo. Ese momento no se compra con
+          un curso, se construye con horas de lab.
+        </p>
+
+        <p>
+          No todo salió bien. La integración de Wazuh con TheHive quedó bloqueada porque el
+          perfil de testing de TheHive no permite crear casos vía API. El script custom estaba
+          listo, la documentación también, pero el perfil no. La solución es migrar a perfil
+          de producción o meter un middleware SOAR. Ese bloqueo es parte del aprendizaje:
+          cuando la integración falla, terminás leyendo la documentación de verdad, no
+          copiando y pegando.
+        </p>
+
+        <h2>El plan de 6 meses</h2>
+
+        <p>
+          Trabajo, estudio y tengo tiempo acotado: 10 a 15 horas por semana para esto. El plan
+          se armó alrededor de eso. Entre semana, una hora después del laburo. Los fines de
+          semana, tres o cuatro horas.
+        </p>
+
+        <p>
+          El primer mes: Wazuh Official Training y TryHackMe SOC Level 1 en paralelo, FIRST
+          CSIRT Basic Course los findes, y Fortinet NSE 1 para cerrar. El segundo mes: reglas
+          custom en Wazuh, MITRE ATT&amp;CK Defender, Fortinet NSE 2 y 3. El tercero: Splunk
+          Fundamentals, SC-900 con voucher, y el primer incidente EICAR para ver la alerta
+          completa. Del cuarto al sexto: DFIR con BlueCape, malware analysis, forense de
+          memoria con Volatility, y la decisión de cuál certificación paga sigue.
+        </p>
+
+        <p>
+          La regla de oro que me dejó el armado del plan: un proyecto completo vale más que
+          diez empezados. Elegí una tarea del nivel 1, terminala bien, publicá algo sobre
+          ella, y recién ahí pasá a la siguiente.
+        </p>
+
+        <h2>De dónde partí</h2>
+
+        <p>
+          No arranqué de cero. Ya tenía las tres certificaciones de Cisco (Junior Cybersecurity
+          Analyst, CyberOps Associate y Cybersecurity Fundamentals) y el Diploma CUC 2025 de la
+          UNDEF. Trabajo en IAM, gestionando identidades y accesos con la suite NetIQ, lo que
+          me da una visión transversal de la organización. Estoy cursando una carrera de
+          ciberseguridad en la universidad. Uso Arch Linux como sistema diario y programo en
+          Python desde los 8 años.
+        </p>
+
+        <p>
+          Si arrancás sin base de certificaciones o sin experiencia en seguridad, el plan
+          se estira un poco, pero la estructura es la misma: gratis primero, lab siempre,
+          certificación paga cuando el presupuesto lo permita.
+        </p>
+
+        <h2>El camino está documentado</h2>
+
+        <p>
+          Todo el proyecto está en mi vault de Obsidian: el roadmap completo, el catálogo con
+          precios verificados en 2026, y las 30 tareas con su prioridad. La idea de
+          este post es que no tengas que armar el plan desde cero. El plan ya está, y es
+          replicable.
+        </p>
+
+        <p>
+          Si estás en la misma posición que yo, con ganas de entrar al blue team y sin
+          presupuesto para certificaciones, el camino es este: arrancá con el lab, hacé las
+          gratuitas, y deja que la práctica te enseñe lo que el cartón no te. El resto es
+          constancia.
+        </p>
+
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://training.wazuh.com/">Wazuh Official Training</a></li>
+          <li><a href="https://tryhackme.com/path/outline/soclevel1">TryHackMe — SOC Level 1</a></li>
+          <li><a href="https://www.first.org/education/trainings">FIRST CSIRT Basic Course</a></li>
+          <li><a href="https://mad.mitre.org/">MITRE ATT&amp;CK Defender</a></li>
+          <li><a href="https://training.fortinet.com/">Fortinet NSE Training</a></li>
+          <li><a href="https://learn.microsoft.com/">Microsoft Learn (SC-900)</a></li>
+          <li><a href="https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final">NIST SP 800-61 Rev 2</a></li>
+        </ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
