@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HACKER-MCP-COMMANDER: le di herramientas de pentesting a mis agentes de IA — lcampassi</title>
+  <meta name="description" content="Los primeros pasos de un MCP server que le da a opencode acceso a 35 herramientas de pentesting en un contenedor Kali Linux aislado. Arquitectura, seguridad por diseño y los bugs que me despertaron. Un proyecto en evolución." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-08-09</span>
+          <span class="tag">automation</span>
+        </div>
+        <h1>HACKER-MCP-COMMANDER: le di herramientas de pentesting a mis agentes de IA</h1>
+        <p class="reading-time">~ 7 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Uso opencode todos los días, con agentes que me escriben código, me administran
+          el sistema y me ayudan con el lab. En algún momento me di cuenta de que el agente
+          podía hacer casi todo, menos una cosa: correr herramientas de pentesting.
+        </p>
+
+        <p>
+          Podía ejecutar nmap desde el host, claro. Pero eso ensuciaba mi Arch, instalaba
+          dependencias que no quería, y sobre todo: darle a un agente de IA acceso directo
+          a mi sistema completo para correr herramientas ofensivas me parecía una idea
+          horrible. Necesitaba un entorno aislado, reproducible, donde el agente tuviera
+          las herramientas pero sin tocar nada del host. Así nació HACKER-MCP-COMMANDER,
+          un MCP server con 35 herramientas de pentesting corriendo en un contenedor Kali
+          Linux. Aclaro desde el arranque: es un work in progress. Lo que cuento acá son
+          los primeros pasos de un proyecto que armé para optimizar mi trabajo y mi
+          aprendizaje, no una herramienta terminada.
+        </p>
+
+        <h2>El problema: agentes con manos pero sin herramientas</h2>
+
+        <p>
+          El protocolo MCP (Model Context Protocol) le da a los asistentes de IA acceso a
+          herramientas externas de forma estandarizada. opencode, Claude Desktop, Cursor,
+          todos lo soportan. La parte difícil no era el protocolo, era decidir dónde
+          corren las herramientas.
+        </p>
+
+        <p>
+          Las opciones que evalué: un server MCP en el host que hablara con la Docker API
+          (como hace k3nn3dy-ai/kali-mcp), un bridge hacia una API Flask dentro del
+          contenedor (el enfoque del paquete oficial mcp-kali-server), o meter el server
+          MCP entero dentro del contenedor Kali. Elegí la tercera. El host solo necesita
+          Docker y un wrapper de 20 líneas que hace <code>docker start</code> +
+          <code>docker exec -i</code>. Todo lo demás vive adentro del contenedor.
+        </p>
+
+        <h2>La arquitectura</h2>
+
+        <p>
+          El flujo es simple: el cliente MCP (opencode) habla por stdio con el wrapper,
+          el wrapper ejecuta el server FastMCP dentro del contenedor, y el server lanza
+          las herramientas como subprocesos. El contenedor corre Kali rolling con unas
+          cuarenta herramientas instaladas: nmap, masscan, gobuster, ffuf, sqlmap, hydra,
+          testssl.sh, wpscan, searchsploit, enum4linux-ng, entre otras.
+        </p>
+
+        <pre><code>opencode ──stdio──► kali-mcp.sh ──docker exec──► FastMCP server ──subprocess──► nmap, sqlmap, hydra...
+                    (wrapper host)                    (dentro del contenedor)</code></pre>
+
+        <p>
+          Cada engagement de pentesting es una sesión con su target autorizado, historial
+          de comandos y evidencia. Los resultados de los scans se guardan en
+          <code>/workspace/sessions/&lt;id&gt;/</code>, un volumen compartido que es el
+          único punto de contacto entre el contenedor y el host. El wrapper tiene cold
+          start: si el contenedor está apagado, lo levanta solo.
+        </p>
+
+        <h2>Seguridad por diseño</h2>
+
+        <p>
+          Un agente de IA con herramientas ofensivas pide a gritos una capa de contención.
+          La lista de lo que hice, en orden de importancia:
+        </p>
+
+        <ul>
+          <li><strong>Allowlist de binarios</strong>: el server solo ejecuta comandos de una lista configurable. No hay shell intermedia, <code>shlex.split</code> parsea los argumentos y los metacharacters (<code>;</code>, <code>&amp;</code>, <code>|</code>, backticks) se rechazan.</li>
+          <li><strong>Blacklist dura</strong>: <code>rm -rf /</code>, <code>mkfs</code>, <code>dd if=</code>, <code>shutdown</code> y similares están bloqueados siempre, sin excepción.</li>
+          <li><strong>Usuario no-root</strong>: el contenedor corre como <code>pentester</code>, con sudo restringido. nmap, masscan y tcpdump tienen file capabilities (<code>setcap</code>) para raw sockets.</li>
+          <li><strong>Red aislada</strong>: bridge <code>pentest-net</code>, sin <code>--privileged</code>, sin host network, solo las capabilities <code>NET_RAW</code> y <code>NET_ADMIN</code>.</li>
+          <li><strong>Timeouts y límites</strong>: 120 segundos por comando por defecto y 100 KB de output máximo, para que un scan no te vuele el contexto del agente.</li>
+        </ul>
+
+        <p>
+          El resultado: el agente puede escanear, enumerar y atacar desde adentro del
+          contenedor, pero no puede tocar el host, no puede escalar a root y no puede
+          correr nada que no esté en la lista.
+        </p>
+
+        <h2>Los bugs que me despertaron</h2>
+
+        <p>
+          El proyecto se hizo en un día, pero ese día tuvo momentos. Algunos bugs fueron
+          clásicos de integración, otros me enseñaron algo que no estaba en ningún
+          tutorial.
+        </p>
+
+        <p>
+          El más raro: <code>no-new-privileges: true</code> en el compose. Suena a buena
+          práctica de hardening, y lo es, pero hace que el kernel ignore las file
+          capabilities. Resultado: nmap corría como pentester y fallaba con
+          <code>Couldn't open a raw socket. Operation not permitted</code>. El diseño del
+          proyecto dependía de setcap + usuario no-root, y esa opción lo rompía todo.
+          Lo saqué con un comentario explicando por qué, y el raw socket volvió a
+          funcionar.
+        </p>
+
+        <p>
+          Otro que me hizo perder tiempo: <code>ssl_analysis</code> se colgaba contra
+          hosts sin TLS. testssl.sh detecta que el puerto no responde TLS y pregunta
+          <code>Really proceed?</code> esperando input. El server esperaba la respuesta
+          hasta el timeout. La solución fue <code>testssl --quiet --warnings off</code>.
+          La opción <code>-w</code> que había visto en algún blog no existe en testssl
+          3.2.2.
+        </p>
+
+        <p>
+          Y el clásico de siempre: la imagen Docker quedó desincronizada con el repo.
+          Había corregido un bug en <code>creds.py</code> (FastMCP 3.x no acepta
+          <code>**kwargs</code> en las tools) pero nunca reconstruí la imagen. El server
+          no arrancaba con un error que ya había arreglado. La lección: después de tocar
+          el código, <code>make build</code> siempre.
+        </p>
+
+        <p>
+          También hubo sorpresas de ecosistema: <code>waybackurls</code> no existe como
+          paquete apt de Kali (hay que instalarlo con Go), y <code>hexdump</code> vive en
+          <code>bsdmainutils</code>. Detalles que solo aparecen cuando construís la imagen
+          y el build falla.
+        </p>
+
+        <h2>La prueba real: scanme.nmap.org</h2>
+
+        <p>
+          Para verificar el flujo completo usé scanme.nmap.org, el host de prueba que el
+          proyecto Nmap autoriza explícitamente para escaneos. Creé la sesión, corrí el
+          port scan, enumeración DNS, análisis de headers, gobuster y testssl. Todo desde
+          el agente, sin tocar una terminal.
+        </p>
+
+        <p>
+          Los resultados fueron interesantes: 22 SSH con OpenSSH 6.6.1p1, 80 con Apache
+          2.4.7 (desactualizado, con 0 de 7 security headers), y unos 90 puertos
+          tcpwrapped que huelen a honeypot. El scan completo tardó 203 segundos, el
+          <code>-sV</code> contra puertos tcpwrapped es lento. gobuster encontró
+          <code>.svn/</code>, <code>images/</code> y <code>shared/</code>. La evidencia
+          quedó guardada en el workspace de la sesión, visible desde el host.
+        </p>
+
+        <p>
+          El momento en que vi el handshake MCP funcionar a través del wrapper, con el
+          contenedor levantándose solo desde frío, fue el que me confirmó que la
+          arquitectura estaba bien. El agente no sabía ni le importaba que las
+          herramientas corrieran en un contenedor.
+        </p>
+
+        <h2>Lo que aprendí</h2>
+
+        <p>
+          Tres cosas. La primera: la contención no se negocia. Un agente con herramientas
+          ofensivas sin sandbox es un incidente esperando pasar. La segunda: las opciones
+          de hardening a veces se pisan entre sí, y el orden importa. no-new-privileges
+          es buena práctica, pero incompatible con file capabilities. La tercera: el
+          patrón de server MCP dentro del contenedor es mucho más simple de operar que
+          un server en el host hablando con la Docker API. Menos piezas móviles, menos
+          superficie.
+        </p>
+
+        <p>
+          El proyecto quedó público en GitHub con 19 tests pasando, skill incluida para
+          opencode y documentación completa. Pero insisto: es un work in progress, lo de
+          hoy fueron los primeros pasos. Le faltan una imagen full con Metasploit, CI, y
+          más tools como wpscan_enum o smb_enum. La idea es que crezca conmigo, a medida
+          que lo uso para optimizar mi trabajo diario y mi aprendizaje.
+        </p>
+
+        <p>
+          Si usás agentes de IA y te gustaría que corran herramientas de pentesting sin
+          ensuciar tu sistema, el repo está ahí para copiarlo, criticarlo o mejorarlo.
+          El contenedor Kali ya está armado, solo falta el target autorizado.
+        </p>
+
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://github.com/D4rkDr4gon/HACKER-MCP-COMMANDER">HACKER-MCP-COMMANDER (repo)</a></li>
+          <li><a href="https://modelcontextprotocol.io/">Model Context Protocol — documentación oficial</a></li>
+          <li><a href="https://github.com/k3nn3dy-ai/kali-mcp">kali-mcp — el proyecto que me sirvió de modelo</a></li>
+          <li><a href="https://www.kali.org/tools/mcp-kali-server/">mcp-kali-server — paquete oficial de Kali</a></li>
+          <li><a href="https://nmap.org/scanning.html">Nmap — scanme.nmap.org (host de prueba autorizado)</a></li>
+        </ul>
+
+        <blockquote>
+          <p><strong>Uso bajo consenso.</strong> Este proyecto ejecuta herramientas ofensivas. Solo operá contra sistemas que poseas o tengas autorización explícita para testear. No se permite el uso de esta ni de ninguna de mis herramientas para realizar actividades ilegales.</p>
+        </blockquote>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
