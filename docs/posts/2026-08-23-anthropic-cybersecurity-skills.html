@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instalé 817 skills de ciberseguridad en Claude Code — lcampassi</title>
+  <meta name="description" content="Anthropic Cybersecurity Skills es un marketplace comunitario con 817 skills de seguridad para Claude Code, listas para instalar con un comando. Por qué lo sumé a mi flujo de trabajo diario." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-08-23</span>
+          <span class="tag">herramientas</span>
+        </div>
+        <h1>Instalé 817 skills de ciberseguridad en Claude Code</h1>
+        <p class="reading-time">~ 6 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Andaba viendo qué se movía en el ecosistema de Claude Code cuando me crucé con
+          <a href="https://www.mahipal.engineer/Anthropic-Cybersecurity-Skills/">Anthropic Cybersecurity Skills</a>,
+          un marketplace de plugins con un catálogo enorme de skills de seguridad: forense,
+          red team, cloud, OT/ICS, threat intel. Lo instalé en el momento, sin pensarlo
+          mucho:
+        </p>
+
+        <pre><code>/plugin marketplace add anthropic-cybersecurity-skills
+/plugin install cybersecurity-skills@anthropic-cybersecurity-skills</code></pre>
+
+        <p>
+          Treinta segundos después tenía <code>cybersecurity-skills@anthropic-cybersecurity-skills
+          (v1.3.0)</code> activo y 817 skills nuevas disponibles para mi agente. Lo cuento
+          porque me parece el tipo de recurso que vale la pena que más gente en el gremio
+          conozca: alguien empaquetó años de workflows de seguridad en un formato que un
+          agente de IA puede leer y ejecutar, y lo publicó gratis.
+        </p>
+
+        <h2>Cómo está armado: progressive disclosure</h2>
+
+        <p>
+          El proyecto sigue el estándar <a href="https://agentskills.io">agentskills.io</a>,
+          el mismo que uso en mis propias skills de <code>~/MY-AGENT-SKILLS/</code>. Cada
+          skill es un <code>SKILL.md</code> con YAML al frente y el workflow abajo. La parte
+          inteligente es que el agente no carga las 817 skills enteras en el contexto:
+          primero lee solo el frontmatter — nombre, descripción, tags, unos 40 tokens — de
+          todas. Recién cuando una coincide con lo que le pedís, carga el cuerpo completo
+          con los pasos, prerequisitos y comandos. Es la diferencia entre tener una
+          biblioteca entera en la mesa o un catálogo con fichas: el agente busca la ficha,
+          y solo ahí saca el libro.
+        </p>
+
+        <p>
+          Abrí una al azar, <code>performing-lateral-movement-with-wmiexec</code>, para ver
+          el nivel de detalle real:
+        </p>
+
+        <pre><code>---
+name: performing-lateral-movement-with-wmiexec
+domain: cybersecurity
+subdomain: red-teaming
+mitre_attack:
+- T1047
+- T1021.003
+- T1550.002
+nist_csf:
+- ID.RA-01
+- GV.OV-02
+---
+## Workflow
+### Phase 1: WMIExec con Impacket
+wmiexec.py domain.local/admin:'Password123'@10.10.10.50
+wmiexec.py -hashes :a1b2c3d4... domain.local/admin@10.10.10.50</code></pre>
+
+        <p>
+          Comandos reales, con la sintaxis correcta de Impacket, técnicas de MITRE ATT&amp;CK
+          mapeadas y, al final del archivo, una tabla con los eventos de Windows que
+          delatan la técnica para el lado defensivo. No es una lista de ideas sueltas, es
+          un procedimiento que podés seguir de punta a punta.
+        </p>
+
+        <h2>Lo que tiene adentro</h2>
+
+        <p>
+          Conté las 817 skills directo en la carpeta que bajó Claude Code, repartidas en
+          subdominios: cloud security es el más grande con 66 skills, threat hunting le
+          sigue con 58, después vienen threat intelligence, network security, forense
+          digital, malware analysis, IAM. Cada una trae referencias a MITRE ATT&amp;CK, y
+          buena parte también mapea a NIST CSF 2.0, D3FEND o NIST AI RMF cuando corresponde.
+          Todo bajo licencia Apache 2.0, así que se puede usar, adaptar y redistribuir sin
+          fricción. Es un proyecto comunitario — vale aclararlo porque el nombre puede
+          confundir, no es de Anthropic — con contribuciones de varias personas, lo cual
+          en este tipo de catálogos es una ventaja: más ojos revisando procedimientos de
+          más dominios de los que cualquiera de nosotros podría cubrir solo.
+        </p>
+
+        <h2>Por qué me parece el momento de sumar esto</h2>
+
+        <p>
+          Vengo armando mi propio ecosistema de skills hace meses, y siempre el cuello de
+          botella fue el mismo: escribir cada workflow a mano lleva tiempo, y mi experiencia
+          cubre bien IAM, blue team y lo que voy practicando en el lab, pero no cubre red
+          team avanzado, ni OT/ICS, ni la mitad de las cosas que hay en este catálogo. Tener
+          817 procedimientos ya escritos, con comandos verificables y mapeo a frameworks,
+          me ahorra justo esa parte y me deja el tiempo para lo que importa: entender por
+          qué funciona cada técnica, no transcribir la sintaxis de memoria.
+        </p>
+
+        <p>
+          Encaja directo con mi roadmap de ARGUS, el proyecto donde vengo armando mi camino
+          hacia CSIRT. La idea es ir probando skills por subdominio a medida que avanzo: esta
+          semana forense de memoria, la que viene threat hunting, y así. Cuando una skill me
+          resuelve un paso que antes tenía que buscar en tres tabs distintas, ya se pagó
+          sola.
+        </p>
+
+        <p>
+          Si trabajás en seguridad y usás Claude Code o cualquier agente compatible con
+          <code>agentskills.io</code>, instalarlo es un comando y probarlo no cuesta nada.
+          Para mí ya es parte del flujo diario.
+        </p>
+
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://www.mahipal.engineer/Anthropic-Cybersecurity-Skills/">Anthropic Cybersecurity Skills — landing page</a></li>
+          <li><a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills">Repo en GitHub</a></li>
+          <li><a href="https://agentskills.io">agentskills.io — estándar de skills</a></li>
+        </ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
