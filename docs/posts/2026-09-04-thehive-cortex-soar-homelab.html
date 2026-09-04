@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TheHive + Cortex: cerrando el ciclo SOAR de mi laboratorio de Wazuh — lcampassi</title>
+  <meta name="description" content="Cómo sumé TheHive, Cortex, Cassandra y Elasticsearch a mi laboratorio de Wazuh para automatizar la gestión de casos y el enriquecimiento de indicadores. Incluye lo que salió mal: secretos expuestos en git y un bind mount que no era lo que parecía." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-09-04</span>
+          <span class="tag">homelab</span>
+        </div>
+        <h1>TheHive + Cortex: cerrando el ciclo SOAR de mi laboratorio de Wazuh</h1>
+        <p class="reading-time">~ 8 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          En el post anterior dejé el laboratorio de Wazuh con agents reportando, reglas custom
+          disparando y una lista de próximos pasos. El primero de esa lista era integrar TheHive
+          para que las alertas no se quedaran mirándose el ombligo en un dashboard, sino que
+          se convirtieran en casos con contexto, con enriquecimiento automático y con un flujo
+          de trabajo real de SOC. Esta semana terminé esa integración, y de paso me llevé puesto
+          un buen susto con secretos que no deberían haber estado donde estaban.
+        </p>
+
+        <p>
+          Este post es la continuación directa del laboratorio de Wazuh: cómo armé el stack de
+          TheHive y Cortex, cómo lo conecté al manager, y las dos lecciones más caras que me dejó
+          el proceso. Una tiene que ver con seguridad de verdad, no de laboratorio. La otra con
+          algo mucho más tonto pero que me hizo perder horas: mi entorno de agente y el host
+          Docker real no comparten filesystem aunque los paths sean idénticos.
+        </p>
+
+        <h2>Por qué TheHive y no otra cosa</h2>
+
+        <p>
+          Wazuh genera alertas, y genera muchas. Sin un lugar donde esas alertas se conviertan en
+          casos de trabajo, con un analista asignado, un timeline y observables enriquecidos, el
+          SIEM termina siendo una pantalla que uno mira de vez en cuando. Necesitaba la pieza de
+          case management y automatización que le faltaba al lab.
+        </p>
+
+        <p>
+          TheHive fue la elección obvia por varias razones:
+        </p>
+
+        <ul>
+          <li><strong>Integración nativa con Wazuh</strong>: el ecosistema ya tiene ejemplos de integración documentados, así que no partía de cero.</li>
+          <li><strong>Cortex como motor de análisis</strong>: los analizadores de Cortex corren automáticamente sobre los observables de un caso (IPs, hashes, dominios) sin que yo tenga que ir a mano a VirusTotal o a un feed de MISP por cada indicador.</li>
+          <li><strong>Es open source y corre en Docker</strong>: mismo criterio que usé para elegir Wazuh. Nada de licencias, todo reproducible con docker compose.</li>
+        </ul>
+
+        <h2>El stack: TheHive, Cortex, Cassandra, Elasticsearch y nginx</h2>
+
+        <p>
+          A diferencia de Wazuh, que es un solo ecosistema pensado para levantarse junto, TheHive
+          necesita armar su propia base de datos y su propio motor de búsqueda por separado. El
+          stack que terminé levantando fue:
+        </p>
+
+        <ul>
+          <li><strong>TheHive 5.7.1</strong>: la plataforma de case management en sí. Acá se crean los casos, se asignan analistas, se agregan observables y tareas.</li>
+          <li><strong>Cortex 4.0.1</strong>: el motor de análisis. Corre los analizadores (VirusTotal, MISP, entre otros) sobre cada observable de un caso, automáticamente o a demanda.</li>
+          <li><strong>Cassandra</strong>: la base de datos donde TheHive persiste casos, tareas y observables.</li>
+          <li><strong>Elasticsearch</strong>: el motor de búsqueda e indexado que usa TheHive para las consultas rápidas sobre casos.</li>
+          <li><strong>nginx</strong>: como reverse proxy delante de todo, para no exponer cada servicio con su puerto propio.</li>
+        </ul>
+
+        <p>
+          Documenté todo el stack en un repo hermano al de Wazuh: <a href="https://github.com/D4rkDr4gon/thehive-homelab" target="_blank" rel="noopener">thehive-homelab</a>.
+          Van juntos a propósito — uno sin el otro es la mitad de la historia.
+        </p>
+
+        <h2>El flujo: de la alerta de Wazuh al caso enriquecido</h2>
+
+        <p>
+          La pieza que cierra el círculo es una integración custom en Python que corre del lado del
+          manager de Wazuh. Cuando una alerta llega con nivel 3 o superior, el script arma un
+          payload con el contexto de la alerta (host, regla, descripción, timestamp) y lo manda
+          a la API de TheHive, que crea un caso nuevo automáticamente.
+        </p>
+
+        <p>
+          Una vez que el caso existe, agrego los observables relevantes — la IP de origen, el hash
+          de un archivo, el dominio involucrado, lo que corresponda según el tipo de alerta. Ahí
+          es donde entra Cortex: apenas se crea un observable, dispara los analizadores configurados
+          sin que yo tenga que hacer nada más. En un par de minutos el caso ya tiene el veredicto de
+          VirusTotal y el cruce contra los indicadores que tengo cargados en MISP, todo dentro del
+          mismo caso, sin saltar entre pestañas.
+        </p>
+
+        <p>
+          El nivel mínimo de 3 lo elegí después de ver cuánto ruido generaba un umbral más bajo.
+          Con nivel 3 capturo lo que realmente amerita revisión sin inundar TheHive de casos por
+          cada login exitoso o evento rutinario.
+        </p>
+
+        <h2>Lo que salió mal: secretos en texto plano</h2>
+
+        <p>
+          Acá viene la parte menos cómoda de contar, pero la más útil. Mientras armaba la
+          documentación del repo de Wazuh para dejarlo público, encontré API keys y contraseñas
+          en texto plano committeadas: la key de VirusTotal, la de TheHive, la contraseña de
+          OpenSearch y la de la API del manager de Wazuh. Todo en archivos trackeados, en un repo
+          que ya estaba en GitHub.
+        </p>
+
+        <p>
+          Lo primero fue rotar lo que se pudo rotar de verdad. Las contraseñas de OpenSearch
+          (admin y kibanaserver) las regeneré con <code>securityadmin.sh</code>, la herramienta
+          que trae el propio Indexer para aplicar cambios de seguridad al cluster. La contraseña
+          de la API de Wazuh la roté a través de su propia REST API, sin tocar archivos de
+          configuración a mano. Las keys de VirusTotal y TheHive no las pude rotar de verdad
+          porque requerían una sesión externa que no tenía a mano en ese momento, pero sí las
+          saqué del repo.
+        </p>
+
+        <p>
+          Con las credenciales nuevas generadas, moví todo a un <code>.env</code> gitignoreado y
+          referencié las variables desde el docker-compose en vez de hardcodear valores. Pero eso
+          no alcanza: el historial de git todavía tenía los secretos viejos en cada commit anterior.
+          Ahí usé <code>git-filter-repo</code> para reescribir el historial completo y sacar esos
+          archivos de raíz, seguido de un force-push para que el remoto quedara limpio también.
+        </p>
+
+        <blockquote>
+          Lección aprendida: rotar la credencial no es el final del trabajo si el valor viejo
+          sigue viviendo en el historial de un repo público. <code>git-filter-repo</code> reescribe
+          el historial, pero el force-push rompe cualquier clon existente — para un repo personal
+          de laboratorio es aceptable, para un repo con colaboradores hay que avisar antes.
+        </blockquote>
+
+        <h2>Lo que salió mal, segunda parte: el bind mount fantasma</h2>
+
+        <p>
+          La segunda sorpresa fue más rara. Durante la rotación necesitaba editar un archivo de
+          configuración montado como bind mount en uno de los contenedores. Edité el archivo desde
+          mi entorno de agente, en la misma ruta que el docker-compose declaraba, y el contenedor
+          seguía leyendo el valor viejo después de reiniciar.
+        </p>
+
+        <p>
+          Resulta que mi entorno de agente y el host Docker real de ese laboratorio no comparten
+          filesystem para esas rutas bind-mounteadas, aunque el path fuera idéntico en ambos
+          lugares. Escribir en <code>/ruta/al/archivo</code> desde mi lado no tocaba el archivo
+          físico que el contenedor tenía montado — eran dos archivos distintos que solo coincidían
+          en el nombre de la ruta.
+        </p>
+
+        <p>
+          La solución fue escribir directamente sobre el contenedor, pasando el contenido por
+          stdin en vez de depender del path compartido:
+        </p>
+
+        <pre><code># Escribir el contenido directamente en el archivo físico
+# del contenedor, sin depender de que el bind mount
+# apunte a lo mismo desde ambos lados
+docker exec -i &lt;container&gt; sh -c 'cat > /ruta/al/archivo' &lt; archivo_local</code></pre>
+
+        <p>
+          Ese comando fue el único que efectivamente modificó el archivo que el contenedor estaba
+          usando. Fue un buen recordatorio de que "mismo path" no siempre significa "mismo archivo",
+          sobre todo cuando hay capas de virtualización o entornos aislados de por medio. Antes de
+          asumir que una edición se propagó, conviene verificar desde adentro del contenedor.
+        </p>
+
+        <h2>Cómo quedó el laboratorio hoy</h2>
+
+        <p>
+          Con todo esto resuelto, el flujo completo ya funciona de punta a punta: un evento en un
+          agente dispara una regla en Wazuh, la alerta cruza el umbral de nivel 3, el script
+          Python crea el caso en TheHive, los observables se cargan y Cortex corre sus analizadores
+          sin intervención manual. Lo que antes era mirar un dashboard y copiar datos a mano ahora
+          es un caso armado esperando revisión, con el enriquecimiento ya hecho.
+        </p>
+
+        <p>
+          Ambos repos quedaron documentados y públicos: <a href="https://github.com/D4rkDr4gon/wazuh-homelab" target="_blank" rel="noopener">wazuh-homelab</a>
+          para el SIEM y los agents, y <a href="https://github.com/D4rkDr4gon/thehive-homelab" target="_blank" rel="noopener">thehive-homelab</a>
+          para el stack de case management. Van de la mano, y el README de cada uno referencia al otro.
+        </p>
+
+        <h2>Cierre</h2>
+
+        <p>
+          Lo que más me queda de este tramo del proyecto no es la integración en sí — que funciona
+          bien y hace lo que tiene que hacer — sino los dos tropiezos. Ninguno de los dos lo iba a
+          encontrar leyendo documentación de antemano. El de los secretos lo encontré porque me
+          tomé el trabajo de revisar el repo completo antes de dejarlo público, no porque una
+          herramienta me avisara. El del bind mount lo encontré porque el contenedor se negaba
+          tercamente a leer lo que yo creía que le estaba escribiendo.
+        </p>
+
+        <p>
+          Ese es el valor real de un laboratorio: no es que todo salga bien, es que cuando algo
+          sale mal es en un entorno donde el costo de equivocarse es aprender, no un incidente en
+          producción. El próximo paso es sumar Active Response y terminar de conectar el Vulnerability
+          Detector de Wazuh con casos automáticos en TheHive también. Va a quedar documentado acá.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="blog-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
