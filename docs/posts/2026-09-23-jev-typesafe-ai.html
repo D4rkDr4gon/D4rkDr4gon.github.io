@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jev: la IA que no escribe, decide — lcampassi</title>
+  <meta name="description" content="TypeSafe AI lanzó Jev, un modelo que en vez de generar texto devuelve decisiones tipadas con probabilidad calibrada. Qué es, cómo funciona y por qué me interesa para triage de alertas y guardrails de agentes." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/profile.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+</head>
+<body>
+
+  <nav class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/" class="brand">lc<span>.</span></a>
+      <div class="nav-links">
+        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
+        <a href="/docs/">blog</a>
+        <a href="/#contact" class="btn-blog">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post-article">
+    <div class="container">
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-09-23</span>
+          <span class="tag">actualidad</span>
+        </div>
+        <h1>Jev: la IA que no escribe, decide</h1>
+        <p class="reading-time">~ 7 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          El martes pasado vi el nombre "Jev" repetido tres veces en distintos feeds en menos de una
+          hora y me picó la curiosidad. Cuando lo investigué un poco me encontré con algo que no
+          esperaba: un modelo que se anuncia explícitamente como lo contrario a ChatGPT. No genera
+          una sola palabra. Le mandás contexto y un esquema de tipos, y te devuelve un valor —una
+          categoría, un número, un booleano— con una probabilidad calibrada al lado. Nada de prosa,
+          nada de "como modelo de lenguaje, puedo decirte que...".
+        </p>
+
+        <p>
+          Lo lanzó TypeSafe AI, una empresa fundada en San Francisco por Diogo Almeida, que trabajó
+          en OpenAI y participó en el desarrollo de RLHF, la técnica de afinado con feedback humano
+          que terminó siendo la base de cómo se entrenan casi todos los chatbots actuales. Dos años
+          después de irse de ahí, sacó algo que apunta directamente al problema que esa misma técnica
+          nunca resolvió del todo: los modelos de texto son lentos, caros y a veces inventan cosas
+          cuando lo que necesitás es una respuesta simple y confiable.
+        </p>
+
+        <h2>Cómo funciona, en la medida en que lo cuentan</h2>
+
+        <p>
+          Jev es transformer, pero ahí termina el parecido con un LLM tradicional. En vez de generar
+          tokens uno detrás del otro, muestrea todas las salidas posibles en una sola pasada paralela.
+          El desarrollador define de antemano el esquema de tipos —por ejemplo, un enum con tres
+          categorías posibles para clasificar un ticket— y el modelo devuelve un valor que pertenece
+          a ese esquema junto con su score de confianza. Como el universo de respuestas está acotado
+          de entrada, TypeSafe puede afirmar que el modelo nunca produce un error de tipo: no es que
+          lo mida empíricamente, es una garantía estructural del diseño.
+        </p>
+
+        <p>
+          El método de entrenamiento se llama Reinforcement Learning for Calibrated Decisions (RLCD),
+          y según Almeida todos los datos que usan son sintéticos, generados por ellos mismos. Sobre
+          la arquitectura exacta se guarda las cartas: TechCrunch reportó que Almeida se mantuvo
+          reservado al respecto, y que hay quien sospecha que por debajo corre algún modelo open-weight
+          existente. Ese punto me parece justo mencionarlo antes de repetir cualquier número de
+          rendimiento como si fuera verificado por un tercero.
+        </p>
+
+        <h2>Los números que muestran</h2>
+
+        <p>
+          Según el blog de lanzamiento, la latencia de punta a punta va de 70 a 500 milisegundos,
+          contra 3 a 329 segundos de los modelos de lenguaje de referencia que usaron para comparar
+          (un promedio entre GPT-6 Astra y Fable 5.1). Eso da la cifra que están repitiendo en todos
+          lados: 40 a 200 veces más rápido. En sus propios workflow evals llegan a hablar de 193.6x
+          más rápido y 444.6x más barato.
+        </p>
+
+        <p>
+          El precio de entrada es 0.042 dólares por millón de tokens de input, y el output es
+          directamente gratis —"demasiado barato para medirlo", dicen. Dos casos que cita TechCrunch
+          le dan algo de sustento real a los números: en Vercel reemplazaron un clasificador basado
+          en un modelo de OpenAI y obtuvieron resultados entre 5 y 18 veces más rápido y con mejor
+          precisión. En Bryo AI hicieron la prueba para clasificación de emails y encontraron que
+          Gemini era apenas más preciso, pero entre 10 y 20 veces más caro que Jev para la misma tarea.
+        </p>
+
+        <p>
+          El propio blog de TypeSafe se encarga de poner los caveats sobre la mesa, cosa que hay que
+          reconocerles: corrieron los evals "desde sus laptops en la costa oeste", admiten que no
+          pueden probar que el pricing no esté subsidiado, y que comparar contra modelos de OpenAI y
+          Anthropic mete un sesgo en la comparación. No hay ningún benchmark independiente todavía.
+          Con eso en mente, los números sirven como orden de magnitud, no como verdad revelada.
+        </p>
+
+        <h2>Por qué el nombre "System One"</h2>
+
+        <p>
+          La categoría de producto que TypeSafe está tratando de inaugurar se llama System One Models,
+          y la referencia es directa a Daniel Kahneman: System 1 es el pensamiento rápido e intuitivo,
+          System 2 el deliberado y lento. Un LLM generando texto con razonamiento paso a paso se parece
+          más a System 2. Jev quiere ocupar el otro lugar: la decisión rápida, casi refleja, para tareas
+          que no necesitan una explicación en lenguaje natural sino una respuesta.
+        </p>
+
+        <p>
+          El nombre del modelo en sí es un homenaje a William Stanley Jevons, el economista de la
+          paradoja que lleva su apellido: cuando algo se vuelve más eficiente y más barato, se termina
+          usando más, no menos. La apuesta de TypeSafe es que si clasificar, rutear o puntuar contenido
+          cuesta centavos y responde en milisegundos, esas operaciones van a aparecer en lugares donde
+          hoy nadie se plantea meter un modelo de IA por el costo o la latencia que implica.
+        </p>
+
+        <h2>Dónde le veo aplicación real</h2>
+
+        <p>
+          Acá es donde el tema deja de ser solo curiosidad y empieza a tocar mi laburo. En el
+          <a href="/docs/posts/2026-09-04-thehive-cortex-soar-homelab.html">laboratorio de Wazuh y TheHive</a>
+          que vengo armando, buena parte del trabajo pesado es justamente esto: clasificar una alerta,
+          decidir si un observable amerita revisión, puntuar la severidad de un caso. Hoy eso lo resuelvo
+          con reglas y umbrales fijos, o mando el contexto a un LLM cuando necesito algo más flexible
+          y pago el costo de latencia que eso implica.
+        </p>
+
+        <p>
+          Un modelo pensado para devolver "phishing / no phishing" con un score de confianza en
+          milisegundos, sin la ceremonia de armar un prompt y parsear una respuesta en texto libre,
+          resuelve un problema real de triage. TypeSafe menciona explícitamente el caso de usar Jev
+          como guardrail sobre otros agentes de IA: verificar si una salida de un modelo más grande se
+          desvió de lo esperado, detectar señales de jailbreak antes de que el agente ejecute una acción.
+          Eso es exactamente el tipo de capa de control que cualquiera que esté automatizando SOC con
+          agentes va a necesitar más temprano que tarde.
+        </p>
+
+        <h2>La cautela que corresponde</h2>
+
+        <p>
+          Dicho todo esto, sigue siendo una empresa de dos años con acceso anticipado limitado, una
+          arquitectura que no muestran completa y benchmarks que corrieron ellos mismos. La comparación
+          contra clasificadores tradicionales (regex, modelos chicos entrenados a medida, hasta un
+          árbol de decisión bien armado) todavía no aparece en ningún lado, y para un montón de casos
+          de triage esa sigue siendo la alternativa más barata de todas. Lo interesante de Jev no es
+          que resuelva algo que antes era imposible, sino que empaqueta un enfoque —clasificación
+          rápida con probabilidad calibrada— con la fricción de un LLM: mandás texto libre, esquema en
+          mano, y listo.
+        </p>
+
+        <p>
+          Voy a esperar a que salga de acceso anticipado y a que aparezca algún benchmark que no sea
+          de la propia TypeSafe antes de meterlo en un flujo real. Pero lo voy a estar siguiendo de
+          cerca, porque si el pricing se sostiene ni remotamente cerca de lo que publicaron, cambia la
+          cuenta de qué tareas de clasificación vale la pena automatizar con IA y cuáles no.
+        </p>
+
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener">TypeSafe AI — Introducing System One Models &amp; Jev</a></li>
+          <li><a href="https://techcrunch.com/2026/09/18/a-new-kind-of-ai-model-from-a-chatgpt-inventor-is-thrilling-developers/" target="_blank" rel="noopener">TechCrunch — A new kind of AI model from a ChatGPT inventor is thrilling developers</a></li>
+        </ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="blog-footer">
+    <div class="container">
+      <a href="/">lcampassi</a> · 2026
+    </div>
+  </footer>
+
+</body>
+</html>
