@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IGA vs PAM: qué necesita tu empresa — lcampassi</title>
+  <meta name="description" content="Diferencias entre IGA (gobierno de identidades) y PAM (gestión de accesos privilegiados), qué problema resuelve cada uno y por cuál conviene empezar." />
+  <link rel="canonical" href="https://lcampassi.com/docs/posts/2026-11-06-iga-vs-pam.html" />
+  <meta name="author" content="Lucciano Campassi" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Lucciano Campassi" />
+  <meta property="og:locale" content="es_AR" />
+  <meta property="og:url" content="https://lcampassi.com/docs/posts/2026-11-06-iga-vs-pam.html" />
+  <meta property="og:title" content="IGA vs PAM: qué necesita tu empresa" />
+  <meta property="og:description" content="Diferencias entre IGA (gobierno de identidades) y PAM (gestión de accesos privilegiados), qué problema resuelve cada uno y por cuál conviene empezar." />
+  <meta property="og:image" content="https://lcampassi.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="article:published_time" content="2026-11-06" />
+  <meta property="article:author" content="Lucciano Campassi" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="IGA vs PAM: qué necesita tu empresa" />
+  <meta name="twitter:description" content="Diferencias entre IGA (gobierno de identidades) y PAM (gestión de accesos privilegiados), qué problema resuelve cada uno y por cuál conviene empezar." />
+  <meta name="twitter:image" content="https://lcampassi.com/og-image.png" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "IGA vs PAM: qué necesita tu empresa", "description": "Diferencias entre IGA (gobierno de identidades) y PAM (gestión de accesos privilegiados), qué problema resuelve cada uno y por cuál conviene empezar.", "datePublished": "2026-11-06", "dateModified": "2026-11-06", "inLanguage": "es", "image": "https://lcampassi.com/og-image.png", "url": "https://lcampassi.com/docs/posts/2026-11-06-iga-vs-pam.html", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://lcampassi.com/docs/posts/2026-11-06-iga-vs-pam.html"}, "author": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi", "url": "https://lcampassi.com/es/"}, "publisher": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi"}, "isPartOf": {"@type": "Blog", "@id": "https://lcampassi.com/docs/#blog", "name": "Blog de Lucciano Campassi"}, "keywords": "iam"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body>
+
+  <header class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/es/" class="brand" aria-label="Lucciano Campassi — inicio">
+        <span class="brand-mark">lc<span>.</span></span>
+        <span class="brand-name">Lucciano Campassi</span>
+      </a>
+      <nav class="nav-links" aria-label="Blog">
+        <a href="/es/">Inicio</a>
+        <a href="/es/#proyectos" class="hide-sm">Proyectos</a>
+        <a href="/docs/" class="active-link">Blog</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <a href="/es/#contacto" class="btn-blog">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <article class="post-article">
+    <div class="container">
+
+      <a href="/docs/" class="post-back"><i class="fas fa-arrow-left"></i> Volver al blog</a>
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-11-06</span>
+          <span class="tag">iam</span>
+        </div>
+        <h1>IGA vs PAM: qué necesita tu empresa</h1>
+        <p class="reading-time">~ 4 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          "¿Necesitamos un IGA o un PAM?" es una de las preguntas que más escucho, y casi
+          siempre viene mezclada. Las dos siglas hablan de identidades y accesos, los
+          fabricantes las venden juntas y en muchas presentaciones parecen intercambiables.
+          No lo son: resuelven problemas distintos, y entender cuál es el tuyo es lo primero.
+        </p>
+
+        <h2>IGA: quién tiene acceso a qué y por qué</h2>
+
+        <p>
+          <strong>IGA</strong> (Identity Governance and Administration) es el gobierno de
+          identidades. Se ocupa del ciclo de vida de <em>todas</em> las identidades de la
+          organización y de sus accesos:
+        </p>
+
+        <ul>
+          <li>Altas, bajas y cambios de puesto automatizados a partir de RR.HH. (joiner/mover/leaver).</li>
+          <li>Aprovisionamiento de cuentas y permisos en directorios y aplicaciones.</li>
+          <li>Solicitudes de acceso con flujo de aprobación.</li>
+          <li>Revisiones periódicas de accesos (recertificaciones).</li>
+          <li>Roles y reglas de segregación de funciones (SoD).</li>
+          <li>Trazabilidad y evidencia para auditoría.</li>
+        </ul>
+
+        <p>
+          La pregunta que responde un IGA es: <strong>¿cada persona tiene los accesos que le
+          corresponden, ni más ni menos, y lo puedo demostrar?</strong>
+        </p>
+
+        <h2>PAM: cómo se usan los accesos más peligrosos</h2>
+
+        <p>
+          <strong>PAM</strong> (Privileged Access Management) es la gestión de accesos
+          privilegiados. Se concentra en un grupo mucho más chico de cuentas, las que pueden
+          hacer más daño: administradores de dominio, root, cuentas de bases de datos,
+          cuentas de servicio con privilegios.
+        </p>
+
+        <ul>
+          <li>Resguardo de credenciales privilegiadas en un cofre y rotación automática.</li>
+          <li>Acceso bajo solicitud y por tiempo limitado, en vez de privilegios permanentes.</li>
+          <li>Sesiones privilegiadas mediadas: el usuario se conecta sin conocer la contraseña.</li>
+          <li>Grabación y auditoría de lo que se hizo en cada sesión.</li>
+        </ul>
+
+        <p>
+          La pregunta que responde un PAM es: <strong>¿quién usó una cuenta privilegiada,
+          cuándo, para qué y qué hizo?</strong>
+        </p>
+
+        <h2>La diferencia en una línea</h2>
+
+        <blockquote>
+          IGA gobierna <em>quién debería tener</em> acceso. PAM controla <em>cómo se usa</em>
+          el acceso privilegiado.
+        </blockquote>
+
+        <p>
+          Un IGA te dice que una persona es administradora de un servidor y si eso fue
+          aprobado y revisado. No te dice qué hizo con ese privilegio el martes a la noche.
+          Un PAM te dice exactamente qué hizo en esa sesión, pero no si esa persona todavía
+          debería tener ese privilegio después de cambiar de área.
+        </p>
+
+        <h2>Dónde se tocan</h2>
+
+        <p>
+          Se complementan, y cuando conviven bien se integran: el IGA gobierna quién puede
+          solicitar acceso privilegiado (y lo incluye en las revisiones), y el PAM controla y
+          registra el uso. Así, el privilegio tiene una aprobación de negocio detrás y además
+          queda rastro de cada uso.
+        </p>
+
+        <p>
+          Trabajo con la suite de One Identity, donde Identity Manager cumple el rol de IGA y
+          Safeguard el de PAM, pero esta división es la misma en cualquier fabricante. Lo que
+          importa no es la marca, sino tener claro qué parte del problema resuelve cada pieza.
+        </p>
+
+        <h2>¿Por cuál empezar?</h2>
+
+        <p>
+          No hay una respuesta universal, pero sí algunas señales que ayudan a decidir.
+        </p>
+
+        <h3>Señales de que el problema es de gobierno (IGA)</h3>
+        <ul>
+          <li>Las bajas dependen de que alguien se acuerde de avisar, y aparecen cuentas de gente que ya no está.</li>
+          <li>Nadie puede contestar rápido qué accesos tiene una persona en todos los sistemas.</li>
+          <li>Las auditorías encuentran accesos sin aprobación o revisiones sin evidencia.</li>
+          <li>Los cambios de puesto suman permisos pero nunca restan.</li>
+          <li>Hay muchas aplicaciones con su propia gestión de usuarios, sin conexión entre ellas.</li>
+        </ul>
+
+        <h3>Señales de que el problema es de privilegios (PAM)</h3>
+        <ul>
+          <li>Las contraseñas de administrador se comparten entre varias personas, o no se cambian hace años.</li>
+          <li>Hay proveedores externos con acceso administrativo permanente.</li>
+          <li>Los administradores usan su cuenta privilegiada para todo, incluido el mail.</li>
+          <li>Ante un incidente, no hay forma de saber quién hizo un cambio en un servidor crítico.</li>
+        </ul>
+
+        <p>
+          En la práctica, el riesgo inmediato suele estar en los privilegios: son pocas
+          cuentas, pero una sola comprometida alcanza para un incidente grave. Y el problema
+          de fondo suele estar en el gobierno: sin saber quién es quién y qué le corresponde,
+          cualquier control termina siendo un parche.
+        </p>
+
+        <h2>Antes de comprar cualquiera de los dos</h2>
+
+        <p>
+          Lo que recomiendo siempre es hacer primero un relevamiento: cuáles son las fuentes
+          de identidad, qué sistemas tienen gestión propia de usuarios, cuántas cuentas
+          privilegiadas hay y quién las usa, qué exige la normativa que aplica a la
+          organización y qué observaciones dejaron las últimas auditorías. Con eso arriba de
+          la mesa, la pregunta "IGA o PAM" casi siempre se responde sola, y se responde en
+          términos de prioridades y no de catálogo.
+        </p>
+
+        <p>
+          Ninguna de las dos herramientas sirve de mucho si se implementa sin procesos detrás.
+          Un PAM con todos los administradores con acceso permanente al cofre, o un IGA que
+          aprovisiona accesos que nadie revisa, son inversiones que se ven bien en un
+          diagrama y cambian poco en la realidad.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <span>© 2026 Lucciano Campassi</span>
+      <nav class="footer-links" aria-label="Pie de página">
+        <a href="/es/">Inicio</a>
+        <a href="/docs/">Blog</a>
+        <a href="/es/#contacto">Contacto</a>
+        <a href="/" hreflang="en" lang="en">English</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/scripts/blog.js"></script>
+</body>
+</html>

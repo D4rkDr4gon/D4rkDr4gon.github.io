@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qué es la recertificación de accesos y cómo implementarla — lcampassi</title>
+  <meta name="description" content="Qué es una recertificación (revisión) de accesos, por qué la piden las normas y cómo implementarla para que el revisor decida de verdad y no apruebe todo en bloque." />
+  <link rel="canonical" href="https://lcampassi.com/docs/posts/2026-11-06-recertificacion-de-accesos.html" />
+  <meta name="author" content="Lucciano Campassi" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Lucciano Campassi" />
+  <meta property="og:locale" content="es_AR" />
+  <meta property="og:url" content="https://lcampassi.com/docs/posts/2026-11-06-recertificacion-de-accesos.html" />
+  <meta property="og:title" content="Qué es la recertificación de accesos y cómo implementarla" />
+  <meta property="og:description" content="Qué es una recertificación (revisión) de accesos, por qué la piden las normas y cómo implementarla para que el revisor decida de verdad y no apruebe todo en bloque." />
+  <meta property="og:image" content="https://lcampassi.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="article:published_time" content="2026-11-06" />
+  <meta property="article:author" content="Lucciano Campassi" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Qué es la recertificación de accesos y cómo implementarla" />
+  <meta name="twitter:description" content="Qué es una recertificación (revisión) de accesos, por qué la piden las normas y cómo implementarla para que el revisor decida de verdad y no apruebe todo en bloque." />
+  <meta name="twitter:image" content="https://lcampassi.com/og-image.png" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Qué es la recertificación de accesos y cómo implementarla", "description": "Qué es una recertificación (revisión) de accesos, por qué la piden las normas y cómo implementarla para que el revisor decida de verdad y no apruebe todo en bloque.", "datePublished": "2026-11-06", "dateModified": "2026-11-06", "inLanguage": "es", "image": "https://lcampassi.com/og-image.png", "url": "https://lcampassi.com/docs/posts/2026-11-06-recertificacion-de-accesos.html", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://lcampassi.com/docs/posts/2026-11-06-recertificacion-de-accesos.html"}, "author": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi", "url": "https://lcampassi.com/es/"}, "publisher": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi"}, "isPartOf": {"@type": "Blog", "@id": "https://lcampassi.com/docs/#blog", "name": "Blog de Lucciano Campassi"}, "keywords": "iam"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body>
+
+  <header class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/es/" class="brand" aria-label="Lucciano Campassi — inicio">
+        <span class="brand-mark">lc<span>.</span></span>
+        <span class="brand-name">Lucciano Campassi</span>
+      </a>
+      <nav class="nav-links" aria-label="Blog">
+        <a href="/es/">Inicio</a>
+        <a href="/es/#proyectos" class="hide-sm">Proyectos</a>
+        <a href="/docs/" class="active-link">Blog</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <a href="/es/#contacto" class="btn-blog">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <article class="post-article">
+    <div class="container">
+
+      <a href="/docs/" class="post-back"><i class="fas fa-arrow-left"></i> Volver al blog</a>
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-11-06</span>
+          <span class="tag">iam</span>
+        </div>
+        <h1>Qué es la recertificación de accesos y cómo implementarla</h1>
+        <p class="reading-time">~ 5 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Una recertificación de accesos es una pregunta simple que casi ninguna organización
+          se hace con regularidad: <strong>¿esta persona todavía necesita este acceso?</strong>
+          Se le pregunta a alguien que sabe la respuesta (normalmente el jefe directo o el
+          dueño de la aplicación), esa persona confirma o rechaza, y lo rechazado se quita.
+        </p>
+
+        <p>
+          Dicho así parece trivial. En la práctica es uno de los procesos que más cuesta
+          sostener, y uno de los que más diferencia hace en el estado real de los accesos de
+          una organización. En mi trabajo diario armo, corro y corrijo campañas de
+          recertificación, así que acá va lo que funciona y lo que no.
+        </p>
+
+        <h2>Por qué hace falta</h2>
+
+        <p>
+          Los accesos se acumulan. Se dan por una urgencia, por un proyecto, por un reemplazo
+          durante unas vacaciones, y casi nunca se quitan. Con los años, la gente termina con
+          muchos más permisos de los que necesita para su trabajo actual. Eso tiene dos
+          consecuencias: una cuenta comprometida vale mucho más para un atacante, y nadie puede
+          explicar por qué ese acceso existe.
+        </p>
+
+        <p>
+          Por eso la revisión periódica de accesos aparece en prácticamente todos los marcos:
+          el control 5.18 de ISO 27001:2022 la pide explícitamente, NIST CSF 2.0 la contempla
+          dentro de la gestión de identidades y accesos, y es de las primeras cosas que mira
+          cualquier auditor.
+        </p>
+
+        <h2>Los tipos de revisión</h2>
+
+        <p>
+          No todas las recertificaciones son iguales. Las más comunes:
+        </p>
+
+        <ul>
+          <li><strong>Por responsable:</strong> cada jefe revisa los accesos de su equipo. Sirve para detectar acumulación de permisos de gente que cambió de rol.</li>
+          <li><strong>Por aplicación o recurso:</strong> el dueño de una aplicación revisa quién tiene acceso a ella. Sirve para aplicaciones críticas o con datos sensibles.</li>
+          <li><strong>De accesos privilegiados:</strong> administradores, cuentas de servicio, grupos sensibles. Conviene que sean más frecuentes que el resto.</li>
+          <li><strong>Por evento:</strong> se dispara cuando alguien cambia de puesto, en vez de esperar a la campaña periódica.</li>
+        </ul>
+
+        <p>
+          En la mayoría de los casos se combinan: una revisión por responsable más espaciada,
+          revisiones por aplicación para lo crítico y revisiones más frecuentes de lo
+          privilegiado.
+        </p>
+
+        <h2>El problema: aprobar todo en bloque</h2>
+
+        <p>
+          El fracaso más común de una recertificación no es técnico. Es que el revisor recibe
+          una lista de cientos de ítems con nombres como <code>GRP_APP_FIN_RW_02</code>, no
+          tiene idea de qué significa cada uno, tiene una fecha límite y aprueba todo para
+          sacárselo de encima.
+        </p>
+
+        <p>
+          El resultado es una campaña "exitosa" con cero rechazos que no sirvió para nada,
+          salvo para generar una evidencia que un auditor atento va a cuestionar.
+        </p>
+
+        <blockquote>
+          Si nadie rechaza nada, el problema no es que los accesos estén perfectos. Es que la
+          revisión no se está haciendo.
+        </blockquote>
+
+        <h2>Cómo implementarla para que funcione</h2>
+
+        <h3>1. Partir de una fuente de verdad</h3>
+        <p>
+          Antes de revisar accesos hay que saber quién es quién. Una recertificación necesita
+          saber quién es el jefe de cada persona y quién es el dueño de cada aplicación. Si eso
+          no está en RR.HH. o en el directorio de forma confiable, la campaña le va a llegar a
+          la persona equivocada.
+        </p>
+
+        <h3>2. Traducir los permisos a lenguaje de negocio</h3>
+        <p>
+          Este es el paso que más impacto tiene y el que más se saltea. Cada permiso que entra
+          en una revisión debería tener una descripción entendible: no
+          <code>GRP_APP_FIN_RW_02</code> sino "Modificación de asientos contables en el sistema
+          de finanzas". Si el revisor entiende lo que está aprobando, decide.
+        </p>
+
+        <h3>3. Acotar el alcance</h3>
+        <p>
+          Mejor empezar revisando las aplicaciones críticas y los accesos privilegiados que
+          intentar revisar todo de una. Una primera campaña chica, bien hecha, enseña mucho más
+          que una gigante que nadie completa.
+        </p>
+
+        <h3>4. Mostrar contexto</h3>
+        <p>
+          Ayuda mucho indicarle al revisor qué accesos son poco comunes para el puesto de esa
+          persona, cuáles no se usan hace meses o cuáles se dieron por fuera del proceso
+          normal. Con ese contexto la decisión es mucho más fácil.
+        </p>
+
+        <h3>5. Cerrar el ciclo: remediar y dejar evidencia</h3>
+        <p>
+          Un rechazo tiene que terminar en un acceso quitado, con fecha y registro. Si la
+          remoción depende de que alguien abra un ticket a mano y otro lo procese cuando
+          pueda, una parte de los rechazos se pierde en el camino. Lo ideal es que la quita
+          sea automática o, como mínimo, que se haga seguimiento hasta confirmarla.
+        </p>
+
+        <h3>6. Medir y ajustar</h3>
+        <p>
+          Después de cada campaña vale la pena mirar: cuánto tardó cada revisor, qué
+          porcentaje rechazó, qué se quitó efectivamente. Esos datos dicen dónde hace falta
+          mejorar descripciones, dónde hay revisores que necesitan acompañamiento y qué
+          aplicaciones conviene revisar más seguido.
+        </p>
+
+        <h2>¿Hace falta una herramienta?</h2>
+
+        <p>
+          Una primera revisión se puede hacer con planillas: exportar accesos, mandarlos a los
+          responsables, juntar respuestas y quitar lo rechazado. Sirve para arrancar y para
+          entender el problema. Pero no escala: consolidar respuestas, perseguir a los que no
+          contestan y demostrar que lo rechazado se quitó se vuelve inmanejable rápido.
+        </p>
+
+        <p>
+          Ahí es donde entra una solución de gobierno de identidades (IGA), que conecta las
+          fuentes, arma las campañas, manda recordatorios, ejecuta las quitas y guarda la
+          evidencia. Pero la herramienta no resuelve lo de fondo: si los permisos no tienen
+          descripción y no se sabe quién es dueño de qué, la herramienta va a automatizar una
+          revisión que nadie entiende.
+        </p>
+
+        <h2>Una revisión que significa algo</h2>
+
+        <p>
+          Lo valioso de una recertificación no es el reporte que queda al final, sino la
+          decisión que toma alguien que sabe. Cuando el proceso está bien armado, cada ciclo
+          deja los accesos un poco más limpios que el anterior, y en algún momento la revisión
+          deja de ser una carga y pasa a ser rutina.
+        </p>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <span>© 2026 Lucciano Campassi</span>
+      <nav class="footer-links" aria-label="Pie de página">
+        <a href="/es/">Inicio</a>
+        <a href="/docs/">Blog</a>
+        <a href="/es/#contacto">Contacto</a>
+        <a href="/" hreflang="en" lang="en">English</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/scripts/blog.js"></script>
+</body>
+</html>
