@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
@@ -17,22 +17,32 @@
   <!-- Shared blog stylesheet (variables, reset, components) -->
   <link rel="stylesheet" href="/src/styles/blog.css" />
 
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 </head>
 <body>
 
-  <nav class="blog-nav">
+  <header class="blog-nav">
     <div class="container nav-inner">
-      <a href="/" class="brand">lc<span>.</span></a>
-      <div class="nav-links">
-        <a href="/"><i class="fas fa-arrow-left"></i> home</a>
-        <a href="/docs/">blog</a>
-        <a href="/#contact" class="btn-blog">contact</a>
+      <a href="/es/" class="brand" aria-label="Lucciano Campassi — inicio">
+        <span class="brand-mark">lc<span>.</span></span>
+        <span class="brand-name">Lucciano Campassi</span>
+      </a>
+      <nav class="nav-links" aria-label="Blog">
+        <a href="/es/">Inicio</a>
+        <a href="/es/#proyectos" class="hide-sm">Proyectos</a>
+        <a href="/docs/" class="active-link">Blog</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <a href="/es/#contacto" class="btn-blog">Contacto</a>
       </div>
     </div>
-  </nav>
+  </header>
 
   <article class="post-article">
     <div class="container">
+
+      <a href="/docs/" class="post-back"><i class="fas fa-arrow-left"></i> Volver al blog</a>
 
       <header class="post-header">
         <div class="post-meta">
@@ -223,9 +233,16 @@ Personal-Vault/
 
   <footer class="post-footer">
     <div class="container">
-      <a href="/">lcampassi</a> · 2026
+      <span>© 2026 Lucciano Campassi</span>
+      <nav class="footer-links" aria-label="Pie de página">
+        <a href="/es/">Inicio</a>
+        <a href="/docs/">Blog</a>
+        <a href="/es/#contacto">Contacto</a>
+        <a href="/" hreflang="en" lang="en">English</a>
+      </nav>
     </div>
   </footer>
 
+  <script type="module" src="/src/scripts/blog.js"></script>
 </body>
 </html>

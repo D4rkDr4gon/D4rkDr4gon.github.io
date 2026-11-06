@@ -1,51 +1,68 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>lcampassi — cyber</title>
-  <meta name="description" content="Lucciano Campassi - Cybersecurity. Blue Team, DFIR, IAM." />
+  <title>Lucciano Campassi — Identity Management &amp; Governance Consultant</title>
+  <meta name="description" content="Lucciano Campassi, identity management and governance (IAM, IGA and PAM) and regulatory compliance consultant (ISO 27001, NIST CSF). CV, experience, certifications, talks and independent consulting." />
+  <meta name="author" content="Lucciano Campassi" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#f7f7f8" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111317" media="(prefers-color-scheme: dark)" />
+  <link rel="canonical" href="https://lcampassi.com/" />
+  <link rel="alternate" hreflang="en" href="https://lcampassi.com/" />
+  <link rel="alternate" hreflang="es" href="https://lcampassi.com/es/" />
+  <link rel="alternate" hreflang="x-default" href="https://lcampassi.com/" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Lucciano Campassi" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="es_AR" />
+  <meta property="og:url" content="https://lcampassi.com/" />
+  <meta property="og:title" content="Lucciano Campassi — Identity Management &amp; Governance Consultant" />
+  <meta property="og:description" content="Identity management and governance and regulatory compliance. CV, experience and independent consulting." />
+  <meta property="og:image" content="https://lcampassi.com/og-image-en.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Lucciano Campassi — Cybersecurity, identity, governance and compliance" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Lucciano Campassi — Identity Management &amp; Governance Consultant" />
+  <meta name="twitter:description" content="Identity management, governance and regulatory compliance." />
+  <meta name="twitter:image" content="https://lcampassi.com/og-image-en.png" />
+
+  <!-- Icons -->
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="lcampassi — cyber" />
-  <meta property="og:description" content="Cybersecurity — Blue Team, DFIR, IAM Consultant." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://lcampassi.com" />
-
-  <!-- Google Fonts: JetBrains Mono -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- Font Awesome 6 (icons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-  <!-- Main stylesheet (Vite bundles all @imports) -->
   <link rel="stylesheet" href="/src/styles/index.css" />
+  <script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')d.dataset.theme=t;}catch(e){}})();</script>
+
+  <!-- @include: src/seo/jsonld-en.html -->
 </head>
-<body>
+<body class="landing">
+  <!-- @include: src/sections/en/nav.html -->
+  <main id="content">
+    <!-- @include: src/sections/en/hero.html -->
+    <!-- @include: src/sections/en/about.html -->
+    <!-- @include: src/sections/en/experience.html -->
+    <!-- @include: src/sections/en/capabilities.html -->
+    <!-- @include: src/sections/en/credentials.html -->
+    <!-- @include: src/sections/en/talks.html -->
+    <!-- @include: src/sections/en/projects.html -->
+    <!-- @include: src/sections/en/services.html -->
+    <!-- @include: src/sections/en/contact.html -->
+  </main>
+  <!-- @include: src/sections/en/footer.html -->
 
-  <!-- ════════════════════════════════════════════════════════
-       SECTIONS — included as partials via vite html-include
-       ════════════════════════════════════════════════════════ -->
-
-  <!-- @include: src/sections/nav.html -->
-  <!-- @include: src/sections/hero.html -->
-  <!-- @include: src/sections/about.html -->
-  <!-- @include: src/sections/expertise.html -->
-  <!-- @include: src/sections/work.html -->
-  <!-- @include: src/sections/skills.html -->
-  <!-- @include: src/sections/credentials.html -->
-  <!-- @include: src/sections/projects.html -->
-  <!-- @include: src/sections/hobbies.html -->
-  <!-- @include: src/sections/contact.html -->
-  <!-- @include: src/sections/footer.html -->
-
-  <!-- Main JavaScript (module) -->
   <script type="module" src="/src/scripts/index.js"></script>
 </body>
 </html>

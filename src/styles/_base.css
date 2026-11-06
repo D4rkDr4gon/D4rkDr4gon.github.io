@@ -1,39 +1,99 @@
 /* ══════════════════════════════════════════════
-   Layout Utilities
+   Landing — base layout (the blog does not import this file)
    ══════════════════════════════════════════════ */
-.container {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 32px;
+.landing strong {
+  color: var(--heading);
 }
 
 .section {
-  padding: 60px 0;
-  border-bottom: 1px solid var(--border);
+  padding-block: clamp(4rem, 7vw, 7rem);
+  border-top: 1px solid var(--border);
 }
 
-.section:last-of-type {
-  border-bottom: none;
+.section--alt {
+  background: var(--surface);
 }
 
-/* ── Section label (e.g. "> about") ── */
-.label {
-  font-size: 0.65rem;
-  font-weight: 500;
+.section-head {
+  max-width: 46rem;
+  margin-bottom: 3rem;
+}
+
+.section-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.section-head-row .section-head { margin-bottom: 0; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-
-.label::before {
-  content: '> ';
   color: var(--red);
+  margin-bottom: 0.9rem;
+}
+.eyebrow::before {
+  content: '';
+  width: 1.5rem;
+  height: 1px;
+  background: currentColor;
 }
 
 .section-title {
-  font-size: 1.3rem;
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  line-height: 1.2;
   font-weight: 700;
-  margin-bottom: 24px;
-  color: var(--text);
+  letter-spacing: -0.025em;
+  color: var(--heading);
+}
+
+.section-lead {
+  margin-top: 0.9rem;
+  font-size: 1.05rem;
+  color: var(--text-dim);
+}
+
+.red { color: var(--red); }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0.5rem;
+  z-index: 200;
+  background: var(--red);
+  color: var(--on-red);
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm);
+}
+.skip-link:focus { left: 0.5rem; }
+
+/* Draft placeholders (data to confirm before publishing) */
+.todo {
+  background: #fff3a8;
+  color: #3d3500;
+  border-radius: 3px;
+  padding: 0 0.25em;
+  font-weight: 600;
+}
+
+/* Reveal on scroll (only when JS is running) */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1; transform: none; }
 }

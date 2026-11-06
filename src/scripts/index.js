@@ -1,20 +1,18 @@
 /**
- * lcampassi.com — Main Entry Point
- *
- * Imports and initializes all JavaScript modules.
- * Vite bundles and treeshakes automatically.
+ * lcampassi.com — Landing entry point (ES + EN)
  */
 
-import { initNavigation } from './_navigation.js';
+import { initNavigation, initReveal } from './_navigation.js';
+import { initTheme } from './theme.js';
 
-// ── Init on DOM ready ──────────────────────────────────
+function init() {
+  initTheme();
+  initNavigation();
+  initReveal();
+}
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
   init();
-}
-
-function init() {
-  initNavigation();
-  console.log('✓ lcampassi.com — initialized');
 }
