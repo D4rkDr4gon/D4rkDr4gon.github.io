@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://lcampassi.com/sitemap.xml
+Sitemap: https://lcampassi.com/identity-tools/sitemap.xml
