@@ -83,7 +83,7 @@
   font-size: 0.82rem;
 }
 .nav-brand-mark span { color: var(--red); }
-.nav-brand-name { font-size: 0.95rem; }
+.nav-brand-name { font-size: 0.95rem; white-space: nowrap; }
 
 .nav-menu { display: flex; align-items: center; gap: 0.15rem; }
 .nav-link {
@@ -92,6 +92,7 @@
   font-size: 0.88rem;
   color: var(--text-dim);
   transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
 }
 .nav-link:hover { color: var(--heading); }
 .nav-link.active { color: var(--heading); background: var(--surface-2); }

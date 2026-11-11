@@ -1,11 +1,14 @@
 /* ══════════════════════════════════════════════
    Landing — responsive
    ══════════════════════════════════════════════ */
-@media (max-width: 1100px) {
+/* Nav: 9 links + actions only fit inline from 1280px; between 1280 and
+   1599px the links are compacted and the name next to the logo is hidden. */
+@media (min-width: 1280px) and (max-width: 1599px) {
   .nav-brand-name { display: none; }
+  .nav-link { padding: 0.45rem 0.5rem; font-size: 0.84rem; }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1279px) {
   .nav-toggle { display: grid; place-items: center; }
   .nav-menu {
     position: fixed;
@@ -23,8 +26,9 @@
   }
   .nav.is-open .nav-menu { display: flex; }
   .nav-link { padding: 0.85rem 0.75rem; font-size: 1rem; }
-  .nav-brand-name { display: inline; }
+}
 
+@media (max-width: 960px) {
   .hero-grid { grid-template-columns: 1fr; }
   .expertise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-photo { justify-self: start; max-width: 20rem; order: -1; }
