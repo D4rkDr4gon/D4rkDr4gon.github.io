@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuentas huérfanas: qué son y cómo encontrarlas antes que el auditor — lcampassi</title>
+  <meta name="description" content="Qué es una cuenta huérfana, en qué se diferencia de una inactiva, cómo encontrarlas en Active Directory y qué hacer con ellas sin romper nada." />
+  <link rel="canonical" href="https://lcampassi.com/docs/posts/2026-11-13-cuentas-huerfanas.html" />
+  <meta name="author" content="Lucciano Campassi" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Lucciano Campassi" />
+  <meta property="og:locale" content="es_AR" />
+  <meta property="og:url" content="https://lcampassi.com/docs/posts/2026-11-13-cuentas-huerfanas.html" />
+  <meta property="og:title" content="Cuentas huérfanas: qué son y cómo encontrarlas antes que el auditor" />
+  <meta property="og:description" content="Qué es una cuenta huérfana, en qué se diferencia de una inactiva, cómo encontrarlas en Active Directory y qué hacer con ellas sin romper nada." />
+  <meta property="og:image" content="https://lcampassi.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="article:published_time" content="2026-11-13" />
+  <meta property="article:author" content="Lucciano Campassi" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cuentas huérfanas: qué son y cómo encontrarlas antes que el auditor" />
+  <meta name="twitter:description" content="Qué es una cuenta huérfana, en qué se diferencia de una inactiva, cómo encontrarlas en Active Directory y qué hacer con ellas sin romper nada." />
+  <meta name="twitter:image" content="https://lcampassi.com/og-image.png" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Cuentas huérfanas: qué son y cómo encontrarlas antes que el auditor", "description": "Qué es una cuenta huérfana, en qué se diferencia de una inactiva, cómo encontrarlas en Active Directory y qué hacer con ellas sin romper nada.", "datePublished": "2026-11-13", "dateModified": "2026-11-13", "inLanguage": "es", "image": "https://lcampassi.com/og-image.png", "url": "https://lcampassi.com/docs/posts/2026-11-13-cuentas-huerfanas.html", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://lcampassi.com/docs/posts/2026-11-13-cuentas-huerfanas.html"}, "author": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi", "url": "https://lcampassi.com/es/"}, "publisher": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi"}, "isPartOf": {"@type": "Blog", "@id": "https://lcampassi.com/docs/#blog", "name": "Blog de Lucciano Campassi"}, "keywords": "iam"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body>
+
+  <header class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/es/" class="brand" aria-label="Lucciano Campassi — inicio">
+        <span class="brand-mark">lc<span>.</span></span>
+        <span class="brand-name">Lucciano Campassi</span>
+      </a>
+      <nav class="nav-links" aria-label="Blog">
+        <a href="/es/">Inicio</a>
+        <a href="/es/#proyectos" class="hide-sm">Proyectos</a>
+        <a href="/docs/" class="active-link">Blog</a>
+        <a href="/identity-tools/" class="hide-sm">Herramientas</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <a href="/es/#contacto" class="btn-blog">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <article class="post-article">
+    <div class="container">
+
+      <a href="/docs/" class="post-back"><i class="fas fa-arrow-left"></i> Volver al blog</a>
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-11-13</span>
+          <span class="tag">iam</span>
+        </div>
+        <h1>Cuentas huérfanas: qué son y cómo encontrarlas antes que el auditor</h1>
+        <p class="reading-time">~ 5 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Una cuenta huérfana es una cuenta habilitada cuyo dueño ya no está, o de la que nadie
+          puede decir de quién es. La persona se fue de la empresa y su usuario sigue activo en
+          algún sistema. O es una cuenta de servicio que creó alguien que ya no trabaja ahí, y hoy
+          nadie se anima a tocarla porque no sabe qué se rompe.
+        </p>
+
+        <p>
+          Es uno de los hallazgos que más aparece cuando audito un entorno, y uno de los que un
+          auditor encuentra más rápido: le alcanza con cruzar la lista de bajas de RR.HH. contra el
+          directorio. Acá va cómo buscarlas vos primero y qué hacer cuando aparecen.
+        </p>
+
+        <h2>Huérfana e inactiva no son lo mismo</h2>
+
+        <p>
+          Se mezclan seguido, y conviene separarlas porque se buscan distinto. Una cuenta
+          <em>inactiva</em> es la que no se usa hace tiempo; el dueño puede seguir en la empresa
+          (alguien de licencia, una cuenta de emergencia). Una cuenta <em>huérfana</em> es la que
+          no tiene un dueño vigente, se use o no.
+        </p>
+
+        <p>
+          La huérfana que además se usa es la peor de las combinaciones. Tiene credenciales
+          válidas, actividad que parece normal y nadie que la reconozca como propia si algo raro
+          pasa con ella.
+        </p>
+
+        <h2>De dónde salen</h2>
+
+        <p>
+          Casi siempre de una baja que no llegó a todos lados. RR.HH. avisa tarde, o avisa por
+          mail. Se deshabilita la cuenta de Active Directory, pero la aplicación con usuarios
+          locales queda afuera porque no está integrada a nada. También salen de contratistas a los
+          que nadie les puso fecha de fin, de cuentas de prueba que se crearon para un proyecto y
+          quedaron, y de cuentas de servicio sin un responsable asignado.
+        </p>
+
+        <p>
+          Por eso las normas lo miran. ISO 27001:2022 lo cubre en los controles 5.16 (gestión de
+          identidades) y 5.18 (derechos de acceso), que piden que los accesos se quiten cuando ya
+          no corresponden y que eso quede registrado.
+        </p>
+
+        <h2>Cómo encontrarlas</h2>
+
+        <h3>1. Cruzar contra la fuente de verdad</h3>
+
+        <p>
+          El método más directo: exportar las cuentas de cada sistema y cruzarlas contra la nómina
+          activa de RR.HH. Toda cuenta personal que no matchea con un empleado o contratista
+          vigente es candidata. Para que el cruce funcione hace falta un identificador común (legajo,
+          número de empleado, mail corporativo) guardado en las cuentas. Si ese dato no está,
+          encontrarlo ya es el primer hallazgo.
+        </p>
+
+        <h3>2. Buscar señales en Active Directory</h3>
+
+        <p>
+          En AD hay atributos que ayudan a sospechar aunque no tengas el cruce armado. Las cuentas
+          habilitadas que no inician sesión hace 90 días:
+        </p>
+
+<pre><code># Límite de inactividad: hoy menos 90 días, en formato FILETIME
+$limite = (Get-Date).AddDays(-90).ToFileTimeUtc()
+
+# Usuarios habilitados (bit 2 de userAccountControl apagado) sin logon desde el límite
+Get-ADUser -LDAPFilter "(&amp;(objectCategory=person)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(lastLogonTimestamp&lt;=$limite))" `
+  -Properties lastLogonTimestamp, manager, description |
+  Select-Object SamAccountName, manager, description,
+    @{n='UltimoLogon'; e={[DateTime]::FromFileTimeUtc($_.lastLogonTimestamp)}}</code></pre>
+
+        <p>
+          Y las que nunca iniciaron sesión, que no tienen <code>lastLogonTimestamp</code>:
+        </p>
+
+<pre><code>(&amp;(objectCategory=person)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(!(lastLogonTimestamp=*)))</code></pre>
+
+        <p>
+          Conviene sumarle una condición sobre <code>whenCreated</code> para no traer las cuentas que
+          se crearon ayer para alguien que todavía no empezó. Si no querés calcular FILETIME a mano,
+          el <a href="/identity-tools/filetime/">conversor de timestamps de AD</a> que armé te genera
+          ambos filtros con los días que le pidas. <code>Search-ADAccount -AccountInactive</code>
+          también sirve para una primera pasada rápida.
+        </p>
+
+        <p>
+          Dos aclaraciones. La primera: <code>lastLogonTimestamp</code> puede estar atrasado hasta
+          unas dos semanas por cómo se replica, así que sirve para umbrales de meses; para contar días es demasiado impreciso.
+          La segunda: una cuenta inactiva todavía no es huérfana. Esta búsqueda da candidatas, y
+          cada una se confirma con RR.HH. o con el jefe que figura en <code>manager</code>.
+        </p>
+
+        <h3>3. Preguntar de quién es cada cuenta que no es de una persona</h3>
+
+        <p>
+          Cuentas de servicio, de aplicaciones, compartidas, de proveedores. Para cada una tiene que
+          haber una persona responsable con nombre y apellido. Las que tienen el campo de
+          responsable vacío, o con alguien que ya se fue, son las huérfanas más delicadas, porque
+          suelen tener permisos altos y contraseñas que no vencen.
+        </p>
+
+        <h2>Qué hacer cuando aparecen</h2>
+
+        <p>
+          Borrar de una es tentador y casi siempre es un error. Si una cuenta de servicio sin dueño
+          resulta que sostenía un proceso nocturno, te enterás a las 3 de la mañana. Lo que hago es
+          deshabilitarla, moverla a una OU de cuarentena, dejar anotado por qué y cuándo, y esperar
+          un tiempo acordado antes de eliminarla. Si alguien reclama, aparece el dueño; si nadie
+          reclama, se borra con respaldo.
+        </p>
+
+        <p>
+          A las cuentas que sí se necesitan les asigno un responsable antes de cerrar el hallazgo.
+          Y cada huérfana encontrada vale como pista: si salió de una baja que no se propagó, el
+          problema real está en el proceso de bajas, y limpiar cuentas sin arreglar eso es secar el
+          piso con la canilla abierta.
+        </p>
+
+        <h2>Cómo evitar que vuelvan</h2>
+
+        <p>
+          La solución de fondo es que la baja salga de RR.HH. y se propague sola a todos los
+          sistemas, que es justamente lo que resuelve una herramienta de gobierno de identidades
+          (IGA) cuando está bien conectada a la fuente de verdad. Mientras eso no esté, ayuda mucho
+          ponerle fecha de vencimiento (<code>accountExpires</code>) a toda cuenta de contratista,
+          exigir un responsable para cualquier cuenta que no sea de una persona, y meter estas
+          cuentas en las
+          <a href="/docs/posts/2026-11-06-recertificacion-de-accesos.html">recertificaciones de
+          accesos</a> periódicas.
+        </p>
+
+        <p>
+          Si nunca hiciste el cruce, empezá por ahí: una exportación de AD, la nómina de RR.HH. y una
+          tarde. Lo que salga de ese primer cruce te va a mostrar bastante bien por dónde se está
+          escapando el proceso de bajas.
+        </p>
+
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://www.iso.org/standard/27001">ISO/IEC 27001:2022</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/search-adaccount">Microsoft Learn: Search-ADAccount</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/windows/win32/adschema/a-lastlogontimestamp">Microsoft Learn: atributo lastLogonTimestamp</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/useraccountcontrol-manipulate-account-properties">Microsoft Learn: flags de userAccountControl</a></li>
+        </ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <span>© 2026 Lucciano Campassi</span>
+      <nav class="footer-links" aria-label="Pie de página">
+        <a href="/es/">Inicio</a>
+        <a href="/docs/">Blog</a>
+        <a href="/es/#contacto">Contacto</a>
+        <a href="/" hreflang="en" lang="en">English</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/scripts/blog.js"></script>
+</body>
+</html>
