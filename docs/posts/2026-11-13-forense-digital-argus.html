@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estoy estudiando forense digital: así lo organicé dentro de ARGUS — lcampassi</title>
+  <meta name="description" content="Por qué elegí forense digital (DFIR) como primer gap a cerrar en ARGUS, cómo reorganicé el proyecto y cómo estudio el tema con un libro, labs y evidencia real." />
+  <link rel="canonical" href="https://lcampassi.com/docs/posts/2026-11-13-forense-digital-argus.html" />
+  <meta name="author" content="Lucciano Campassi" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Lucciano Campassi" />
+  <meta property="og:locale" content="es_AR" />
+  <meta property="og:url" content="https://lcampassi.com/docs/posts/2026-11-13-forense-digital-argus.html" />
+  <meta property="og:title" content="Estoy estudiando forense digital: así lo organicé dentro de ARGUS" />
+  <meta property="og:description" content="Por qué elegí forense digital (DFIR) como primer gap a cerrar en ARGUS, cómo reorganicé el proyecto y cómo estudio el tema con un libro, labs y evidencia real." />
+  <meta property="og:image" content="https://lcampassi.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="article:published_time" content="2026-11-13" />
+  <meta property="article:author" content="Lucciano Campassi" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Estoy estudiando forense digital: así lo organicé dentro de ARGUS" />
+  <meta name="twitter:description" content="Por qué elegí forense digital (DFIR) como primer gap a cerrar en ARGUS, cómo reorganicé el proyecto y cómo estudio el tema con un libro, labs y evidencia real." />
+  <meta name="twitter:image" content="https://lcampassi.com/og-image.png" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Estoy estudiando forense digital: así lo organicé dentro de ARGUS", "description": "Por qué elegí forense digital (DFIR) como primer gap a cerrar en ARGUS, cómo reorganicé el proyecto y cómo estudio el tema con un libro, labs y evidencia real.", "datePublished": "2026-11-13", "dateModified": "2026-11-13", "inLanguage": "es", "image": "https://lcampassi.com/og-image.png", "url": "https://lcampassi.com/docs/posts/2026-11-13-forense-digital-argus.html", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://lcampassi.com/docs/posts/2026-11-13-forense-digital-argus.html"}, "author": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi", "url": "https://lcampassi.com/es/"}, "publisher": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi"}, "isPartOf": {"@type": "Blog", "@id": "https://lcampassi.com/docs/#blog", "name": "Blog de Lucciano Campassi"}, "keywords": "dfir"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body>
+
+  <header class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/es/" class="brand" aria-label="Lucciano Campassi — inicio">
+        <span class="brand-mark">lc<span>.</span></span>
+        <span class="brand-name">Lucciano Campassi</span>
+      </a>
+      <nav class="nav-links" aria-label="Blog">
+        <a href="/es/">Inicio</a>
+        <a href="/es/#proyectos" class="hide-sm">Proyectos</a>
+        <a href="/docs/" class="active-link">Blog</a>
+        <a href="/identity-tools/" class="hide-sm">Herramientas</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <a href="/es/#contacto" class="btn-blog">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <article class="post-article">
+    <div class="container">
+
+      <a href="/docs/" class="post-back"><i class="fas fa-arrow-left"></i> Volver al blog</a>
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-11-13</span>
+          <span class="tag">dfir</span>
+        </div>
+        <h1>Estoy estudiando forense digital: así lo organicé dentro de ARGUS</h1>
+        <p class="reading-time">~ 6 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          Wazuh me avisa cuando pasa algo raro en mi máquina. Si mañana esa alerta fuera un
+          incidente de verdad, ¿podría explicar qué pasó, en qué orden y con qué evidencia? Hoy,
+          a medias. Esa parte, reconstruir los hechos y dejarlos documentados para que otro los
+          pueda revisar, es la forense digital, y es donde más flojo estoy.
+        </p>
+
+        <p>
+          Así que me puse a estudiarla. Acá cuento por qué la elegí, cómo encaja en ARGUS (el
+          proyecto personal con el que me estoy formando para trabajar en un CSIRT) y cómo
+          organicé el estudio para no sumar otra pila de cursos empezados.
+        </p>
+
+        <h2>Dónde estaba ARGUS</h2>
+
+        <p>
+          En agosto <a href="/docs/posts/2026-08-09-proyecto-argus-certificaciones.html">conté
+          el plan original</a>: un roadmap largo, un catálogo de certificaciones gratuitas, un lab
+          con Wazuh, TheHive y Cortex en Docker sobre Arch, y 34 tareas repartidas en fases. A las
+          pocas semanas me di cuenta de que el plan asumía que arrancaba de cero.
+        </p>
+
+        <p>
+          Hace tres años que trabajo en IAM en entornos productivos, y Linux, redes, hardening y
+          lectura de logs los uso todos los días. Tener tareas para aprender eso no me aportaba
+          nada. Encima, mirar una lista de 34 casillas sin tildar me desanimaba más de lo que me
+          empujaba.
+        </p>
+
+        <p>
+          Así que recalibré. Las tareas que repetían cosas que ya sé las junté en un checklist que
+          se resuelve en una tarde, solo para confirmar que efectivamente las sé. El resto lo
+          agrupé en cinco tracks, cada uno con su objetivo y un entregable para publicar:
+        </p>
+
+        <ul>
+          <li>DFIR (forense de disco, memoria y timeline).</li>
+          <li>Análisis de malware y reversing.</li>
+          <li>Threat intelligence y hunting.</li>
+          <li>Detection engineering.</li>
+          <li>Operación de SOC y automatización, con un capstone al final.</li>
+        </ul>
+
+        <p>
+          Los cuatro primeros son los huecos que encontré en lo que sé. El quinto los cruza en un
+          ejercicio final: simular un ataque completo contra mi lab y responderlo entero, desde la
+          alerta hasta el reporte.
+        </p>
+
+        <h2>Por qué arranqué por forense</h2>
+
+        <p>
+          Triagear una alerta y investigar un incidente son trabajos distintos. Cuando triageás,
+          mirás la alerta, decidís si es real y la escalás. Cuando investigás, agarrás un sistema
+          comprometido, reconstruís qué pasó y escribís un reporte que aguante que alguien más lo
+          revise con lupa. En un CSIRT te piden las dos cosas, y yo solo practiqué la primera.
+        </p>
+
+        <p>
+          También pesó que forense está debajo de los otros tracks. Para analizar malware
+          necesitás evidencia bien adquirida; para hacer hunting tenés que saber qué rastros deja
+          cada técnica. Y responder a un incidente sin forense termina siendo contener y cruzar los
+          dedos.
+        </p>
+
+        <p>
+          Y hay algo que me resulta familiar. En IAM me paso buena parte del tiempo contestando
+          quién tuvo acceso a qué, desde cuándo y por qué, y dejándolo auditable. En forense la
+          pregunta se parece bastante, solo que llega después del hecho y la única fuente que
+          tenés es la evidencia.
+        </p>
+
+        <h2>Un libro como hilo conductor</h2>
+
+        <p>
+          Mi primera versión del track era una lista de recursos sueltos: el curso DFIR
+          Foundations de BlueCape, una tarea de Volatility, labs de CyberDefenders. Todos buenos.
+          El problema es que me conozco: con diez recursos y ningún orden, termino saltando de uno a
+          otro sin cerrar ninguno.
+        </p>
+
+        <p>
+          El 10 de noviembre reorganicé el track alrededor de un libro,
+          <a href="https://www.marcombo.com/analisis-forense-digital-9788426741233/"><em>Análisis
+          forense digital. Metodologías, herramientas y aplicaciones</em></a>, de Rafael Socas
+          Gutiérrez y Luis Gómez Déniz (Marcombo, 2026). Me convenció que cada capítulo trae un
+          test, ejercicios resueltos y un proyecto práctico con artefactos descargables y su
+          solución, o sea, todo lo que necesito para estudiar solo y saber si lo estoy haciendo
+          bien.
+        </p>
+
+        <p>
+          Cada capítulo pasó a ser un módulo. El primero es metodología: adquisición, cadena de
+          custodia, metadatos y anti-forense. Después vienen Windows (memoria RAM con FTK Imager y
+          Volatility, registro, logs), Linux (volcado con AVML, cuentas, cron), tráfico de red con
+          Wireshark y tcpdump, malware con YARA y fuzzy hashing, y por último correo electrónico y
+          análisis de cabeceras.
+        </p>
+
+        <p>
+          Los recursos que ya tenía quedaron colgados del módulo que les corresponde. BlueCape lo
+          hago en paralelo con el capítulo 1 porque cubre el mismo marco desde otro lado. La tarea
+          de Volatility sobre mi propio Arch se convirtió en la práctica del capítulo de Linux. Y
+          CyberDefenders lo dejo para el final, para sumar horas de práctica cuando ya tenga el libro
+          terminado.
+        </p>
+
+        <h2>Cómo estudio cada módulo</h2>
+
+        <p>
+          Todos los módulos siguen el mismo ciclo:
+        </p>
+
+        <ol>
+          <li>Leo el capítulo y anoto solo lo nuevo. Si algo ya lo tengo en mi vault de Obsidian, pongo el link y sigo.</li>
+          <li>Hago el test sin mirar y lo corrijo con el anexo del libro.</li>
+          <li>Intento los ejercicios resueltos antes de leer la resolución.</li>
+          <li>Hago el proyecto práctico en una VM, con los artefactos originales.</li>
+          <li>Busco una práctica externa del mismo tema con evidencia menos guiada: imágenes de <a href="https://cfreds.nist.gov/">NIST CFReDS</a>, <a href="https://github.com/stuxnet999/MemLabs">MemLabs</a> para memoria de Windows, <a href="https://www.malware-traffic-analysis.net/training-exercises.html">Malware Traffic Analysis</a> para red.</li>
+          <li>Escribo un mini-reporte de una página con la pregunta, la evidencia, las herramientas, los hallazgos y la conclusión.</li>
+        </ol>
+
+        <p>
+          Me puse una regla que sé que me va a costar: el PDF con la solución del proyecto lo abro
+          recién cuando mi reporte está escrito. Si lo leo antes, termino copiando los pasos y me
+          pierdo justamente la parte de pensar qué buscar.
+        </p>
+
+        <h2>La evidencia se trata como evidencia</h2>
+
+        <p>
+          Los archivos del libro son de práctica (una foto, un PCAP, un par de mails), pero decidí
+          manejarlos como si fueran de un caso real. Quiero que el procedimiento correcto me salga
+          sin pensarlo, y eso se logra repitiéndolo desde el primer ejercicio.
+        </p>
+
+        <p>
+          Cada capítulo tiene tres carpetas: <code>evidencia/</code> con los originales en solo
+          lectura, <code>trabajo/</code> para las copias y lo que generan las herramientas, y
+          <code>reporte/</code> para el entregable. Antes de tocar nada, hasheé cada original:
+        </p>
+
+<pre><code># Originales en solo lectura, para no modificarlos por accidente
+chmod -R a-w Cap*/evidencia/
+
+# Hash SHA-256 de cada original, guardado aparte
+sha256sum Cap*/evidencia/* &gt; HASHES-evidencia-original.sha256
+
+# Antes y después de cada sesión: verificar que nada cambió
+sha256sum -c HASHES-evidencia-original.sha256
+
+# Se trabaja siempre sobre una copia
+cp Cap1/evidencia/Imagen_Analisis.jpg Cap1/trabajo/</code></pre>
+
+        <p>
+          Es lo más básico de la cadena de custodia, y me parece mejor tenerlo automatizado antes de
+          llegar a un volcado de memoria de varios gigas. De hecho, el primer proyecto del libro va
+          de esto: dos imágenes que a simple vista son iguales, y hay que demostrar con hashes y
+          metadatos cuál fue modificada.
+        </p>
+
+        <h2>Dónde estoy hoy</h2>
+
+        <p>
+          Estoy en el arranque. El track está armado, el material del libro organizado y hasheado, y
+          lo próximo es el capítulo 1 junto con BlueCape. Después me toca armar una workstation
+          forense en Arch con las herramientas que usa el libro (Autopsy, Volatility 3, AVML,
+          bulk_extractor, Wireshark, YARA, ssdeep) y una VM con Windows para FTK Imager. Prefiero
+          esperar a terminar el primer capítulo para instalarla; así sé qué voy a usar de verdad.
+        </p>
+
+        <p>
+          El entregable del track es un caso forense mío, de principio a fin: comprometer a
+          propósito mi host o una VM, adquirir la evidencia, armar la timeline y publicar el reporte
+          acá. Hasta entonces voy a ir escribiendo sobre cada módulo a medida que lo termine, incluido
+          lo que me salga mal.
+        </p>
+
+        <p>
+          Si también estás arrancando con forense, lo que a mí me destrabó fue elegir un recurso
+          central y colgar el resto de ahí. Con el mío ya elegido, ahora toca sentarse con el
+          capítulo 1.
+        </p>
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://www.marcombo.com/analisis-forense-digital-9788426741233/">Socas Gutiérrez y Gómez Déniz, <em>Análisis forense digital</em> (Marcombo, 2026)</a></li>
+          <li><a href="https://csrc.nist.gov/pubs/sp/800/86/final">NIST SP 800-86: Guide to Integrating Forensic Techniques into Incident Response</a></li>
+          <li><a href="https://bluecapesecurity.com/courses/">BlueCape Security: DFIR Foundations</a></li>
+          <li><a href="https://github.com/volatilityfoundation/volatility3">Volatility 3</a></li>
+          <li><a href="https://cfreds.nist.gov/">NIST CFReDS: imágenes forenses de referencia</a></li>
+          <li><a href="https://github.com/stuxnet999/MemLabs">MemLabs</a></li>
+          <li><a href="https://www.malware-traffic-analysis.net/training-exercises.html">Malware Traffic Analysis: ejercicios</a></li>
+        </ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <span>© 2026 Lucciano Campassi</span>
+      <nav class="footer-links" aria-label="Pie de página">
+        <a href="/es/">Inicio</a>
+        <a href="/docs/">Blog</a>
+        <a href="/es/#contacto">Contacto</a>
+        <a href="/" hreflang="en" lang="en">English</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/scripts/blog.js"></script>
+</body>
+</html>
