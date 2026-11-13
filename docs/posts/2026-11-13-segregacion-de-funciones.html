@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Segregación de funciones (SoD): qué es y cómo detectar conflictos de accesos — lcampassi</title>
+  <meta name="description" content="Qué es la segregación de funciones, qué conflictos de SoD son los más comunes, cómo detectarlos y qué hacer cuando una empresa chica no puede separar tareas." />
+  <link rel="canonical" href="https://lcampassi.com/docs/posts/2026-11-13-segregacion-de-funciones.html" />
+  <meta name="author" content="Lucciano Campassi" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Lucciano Campassi" />
+  <meta property="og:locale" content="es_AR" />
+  <meta property="og:url" content="https://lcampassi.com/docs/posts/2026-11-13-segregacion-de-funciones.html" />
+  <meta property="og:title" content="Segregación de funciones (SoD): qué es y cómo detectar conflictos de accesos" />
+  <meta property="og:description" content="Qué es la segregación de funciones, qué conflictos de SoD son los más comunes, cómo detectarlos y qué hacer cuando una empresa chica no puede separar tareas." />
+  <meta property="og:image" content="https://lcampassi.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="article:published_time" content="2026-11-13" />
+  <meta property="article:author" content="Lucciano Campassi" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Segregación de funciones (SoD): qué es y cómo detectar conflictos de accesos" />
+  <meta name="twitter:description" content="Qué es la segregación de funciones, qué conflictos de SoD son los más comunes, cómo detectarlos y qué hacer cuando una empresa chica no puede separar tareas." />
+  <meta name="twitter:image" content="https://lcampassi.com/og-image.png" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Segregación de funciones (SoD): qué es y cómo detectar conflictos de accesos", "description": "Qué es la segregación de funciones, qué conflictos de SoD son los más comunes, cómo detectarlos y qué hacer cuando una empresa chica no puede separar tareas.", "datePublished": "2026-11-13", "dateModified": "2026-11-13", "inLanguage": "es", "image": "https://lcampassi.com/og-image.png", "url": "https://lcampassi.com/docs/posts/2026-11-13-segregacion-de-funciones.html", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://lcampassi.com/docs/posts/2026-11-13-segregacion-de-funciones.html"}, "author": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi", "url": "https://lcampassi.com/es/"}, "publisher": {"@type": "Person", "@id": "https://lcampassi.com/#person", "name": "Lucciano Campassi"}, "isPartOf": {"@type": "Blog", "@id": "https://lcampassi.com/docs/#blog", "name": "Blog de Lucciano Campassi"}, "keywords": "iam"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Shared blog stylesheet (variables, reset, components) -->
+  <link rel="stylesheet" href="/src/styles/blog.css" />
+
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body>
+
+  <header class="blog-nav">
+    <div class="container nav-inner">
+      <a href="/es/" class="brand" aria-label="Lucciano Campassi — inicio">
+        <span class="brand-mark">lc<span>.</span></span>
+        <span class="brand-name">Lucciano Campassi</span>
+      </a>
+      <nav class="nav-links" aria-label="Blog">
+        <a href="/es/">Inicio</a>
+        <a href="/es/#proyectos" class="hide-sm">Proyectos</a>
+        <a href="/docs/" class="active-link">Blog</a>
+        <a href="/identity-tools/" class="hide-sm">Herramientas</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <a href="/es/#contacto" class="btn-blog">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <article class="post-article">
+    <div class="container">
+
+      <a href="/docs/" class="post-back"><i class="fas fa-arrow-left"></i> Volver al blog</a>
+
+      <header class="post-header">
+        <div class="post-meta">
+          <span>2026-11-13</span>
+          <span class="tag">iam</span>
+        </div>
+        <h1>Segregación de funciones (SoD): qué es y cómo detectar conflictos de accesos</h1>
+        <p class="reading-time">~ 5 min de lectura</p>
+      </header>
+
+      <div class="post-content">
+
+        <p>
+          La segregación de funciones (SoD, por <em>segregation of duties</em>) parte de una idea
+          muy simple: nadie debería poder completar solo un proceso sensible de principio a fin. El
+          ejemplo de manual es el de compras. Si la misma persona puede dar de alta un proveedor y
+          aprobarle un pago, puede inventarse un proveedor y pagarse a sí misma, y ningún control
+          del proceso lo va a frenar.
+        </p>
+
+        <p>
+          En los proyectos de gobierno de identidades, definir y controlar estas reglas es una parte
+          importante del trabajo, y suele ser la que más conversación con el negocio necesita. Acá
+          va qué es un conflicto de SoD, cómo se detecta y qué hacer cuando no hay forma de separar
+          las tareas.
+        </p>
+
+        <h2>Por qué la piden</h2>
+
+        <p>
+          Separar funciones sirve contra el fraude y también contra el error: si otra persona tiene
+          que aprobar lo que hiciste, hay una segunda mirada antes de que el cambio impacte. Por eso
+          aparece en casi todos los marcos. ISO 27001:2022 la tiene como control propio (5.3,
+          segregación de funciones), NIST SP 800-53 la cubre en AC-5, y en empresas alcanzadas por
+          SOX es de lo primero que se revisa en los controles sobre el reporte financiero.
+        </p>
+
+        <p>
+          Para un auditor es un control fácil de probar: elige un par de permisos que no deberían
+          convivir y busca si alguien tiene los dos. Si aparece alguien y no hay una excepción
+          documentada, ya tiene el hallazgo.
+        </p>
+
+        <h2>Qué es un conflicto</h2>
+
+        <p>
+          Un conflicto de SoD es un par (a veces un trío) de funciones que una misma persona no
+          debería tener juntas. Se definen a nivel de negocio, pensando en el proceso, y recién
+          después se bajan a permisos técnicos. Algunos de los más comunes:
+        </p>
+
+        <table>
+          <thead>
+            <tr><th>Función A</th><th>Función B</th><th>Riesgo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Alta y modificación de proveedores</td><td>Aprobación de pagos</td><td>Pagos a proveedores ficticios</td></tr>
+            <tr><td>Carga de facturas</td><td>Aprobación de esas mismas facturas</td><td>Facturas infladas o duplicadas</td></tr>
+            <tr><td>Desarrollo de código</td><td>Pase a producción</td><td>Cambios sin revisión en sistemas productivos</td></tr>
+            <tr><td>Solicitud de accesos</td><td>Aprobación de accesos</td><td>Autoasignarse permisos</td></tr>
+            <tr><td>Administración de un sistema</td><td>Revisión de los logs de ese sistema</td><td>Borrar el rastro de lo que se hizo</td></tr>
+          </tbody>
+        </table>
+
+        <p>
+          Lo difícil es el paso siguiente: traducir "aprobación de pagos" a los permisos reales de
+          cada sistema. En un ERP puede ser una transacción, un perfil o la combinación de varios; en
+          Active Directory, la membresía a un grupo que da acceso a una carpeta. Si esa traducción
+          está mal, la regla existe en papel y no detecta nada.
+        </p>
+
+        <h2>Cómo se detectan</h2>
+
+        <p>
+          Hay dos momentos para hacerlo, y conviene tener los dos.
+        </p>
+
+        <p>
+          El control preventivo actúa cuando alguien pide un acceso. Antes de
+          aprobar, el flujo revisa si el permiso nuevo entra en conflicto con lo que la persona ya
+          tiene. Si hay conflicto, la solicitud se rechaza o pasa a una aprobación especial donde
+          alguien acepta el riesgo de forma explícita.
+        </p>
+
+        <p>
+          El control detectivo revisa periódicamente los accesos que ya existen. Es
+          necesario porque no todo pasa por el flujo de solicitudes: hay permisos que se dan a mano
+          por una urgencia, cambios de puesto que no le quitaron lo anterior a nadie, y reglas que se
+          crean cuando los accesos ya estaban asignados.
+        </p>
+
+        <p>
+          Sin una herramienta, un primer análisis detectivo se puede hacer con una exportación de
+          accesos. Por ejemplo, con dos tablas, una con los accesos de cada usuario y otra con las
+          reglas de conflicto:
+        </p>
+
+<pre><code>-- accesos(usuario, permiso): exportación de lo que tiene cada persona
+-- reglas_sod(regla, permiso_a, permiso_b): los pares que no pueden convivir
+SELECT r.regla, a.usuario, r.permiso_a, r.permiso_b
+FROM reglas_sod r
+JOIN accesos a ON a.permiso = r.permiso_a
+JOIN accesos b ON b.permiso = r.permiso_b
+              AND b.usuario = a.usuario
+ORDER BY r.regla, a.usuario;</code></pre>
+
+        <p>
+          Sirve para un primer diagnóstico. El límite aparece rápido: los conflictos más
+          interesantes suelen cruzar sistemas (el alta del proveedor en el ERP y la liberación del
+          pago en el home banking), y para verlos necesitás los accesos de todos esos sistemas
+          asociados a la misma persona. Eso es justamente lo que resuelve una plataforma de IGA,
+          que tiene la identidad única y los accesos de cada sistema conectado.
+        </p>
+
+        <h2>Cuidado con los roles</h2>
+
+        <p>
+          Un error que veo seguido es armar roles que ya traen el conflicto adentro. Se crea un rol
+          "Analista de compras" sumando todo lo que tenía la persona que hacía ese trabajo, y esa
+          persona, por acumulación, podía cargar y aprobar. A partir de ahí, cada alta con ese rol
+          nace en conflicto.
+        </p>
+
+        <p>
+          Por eso las reglas de SoD también se evalúan sobre la definición de cada rol, antes de
+          asignarlo a alguien. Si un rol viola una regla por sí solo, hay que partirlo.
+        </p>
+
+        <h2>Cuando no se puede separar</h2>
+
+        <p>
+          En una empresa chica, a veces hay una sola persona en administración y no hay a quién
+          pasarle la mitad del proceso. Ahí toca convivir con el conflicto y gestionarlo con
+          controles compensatorios. Lo habitual es:
+        </p>
+
+        <ul>
+          <li>Registrar la excepción con su motivo, quién aceptó el riesgo y una fecha de vencimiento.</li>
+          <li>Hacer que un tercero revise periódicamente las operaciones de esa persona (por ejemplo, los pagos del mes contra los proveedores dados de alta).</li>
+          <li>Asegurarse de que los logs de esas operaciones existan y que esa persona no los pueda modificar.</li>
+          <li>Volver a evaluar la excepción cuando vence, en lugar de renovarla sola.</li>
+        </ul>
+
+        <p>
+          Para un auditor, un conflicto con una excepción documentada y un control compensatorio
+          que funciona es muy distinto de un conflicto que nadie conocía.
+        </p>
+
+        <h2>Por dónde empezar</h2>
+
+        <p>
+          El error típico es querer cargar cientos de reglas de entrada. Termina en miles de
+          conflictos que nadie puede revisar, y el análisis se abandona. Me funciona mejor sentarme
+          con finanzas, compras y tecnología, acordar entre cinco y diez reglas para los procesos
+          que de verdad preocupan, traducirlas bien a permisos y limpiar esos conflictos primero.
+          Después se suman reglas de a poco.
+        </p>
+
+        <p>
+          Si querés una prueba rápida de cómo estás, elegí el par proveedores y pagos, exportá
+          quién tiene cada permiso y cruzalo. Esa lista corta suele decir bastante sobre el resto.
+        </p>
+
+        <h2>Referencias</h2>
+
+        <ul>
+          <li><a href="https://www.iso.org/standard/27001">ISO/IEC 27001:2022 (control 5.3)</a></li>
+          <li><a href="https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final">NIST SP 800-53 Rev. 5 (AC-5, Separation of Duties)</a></li>
+          <li><a href="/docs/posts/2026-11-06-recertificacion-de-accesos.html">Qué es la recertificación de accesos y cómo implementarla</a></li>
+          <li><a href="/docs/posts/2026-11-06-iga-vs-pam.html">IGA vs PAM: qué necesita tu empresa</a></li>
+        </ul>
+
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="post-footer">
+    <div class="container">
+      <span>© 2026 Lucciano Campassi</span>
+      <nav class="footer-links" aria-label="Pie de página">
+        <a href="/es/">Inicio</a>
+        <a href="/docs/">Blog</a>
+        <a href="/es/#contacto">Contacto</a>
+        <a href="/" hreflang="en" lang="en">English</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/scripts/blog.js"></script>
+</body>
+</html>
