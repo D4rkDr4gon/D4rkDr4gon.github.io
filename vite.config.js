@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { resolve, dirname, relative, extname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { createHash } from 'crypto';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -68,6 +69,45 @@ function htmlInclude() {
   };
 }
 
+// ── Plugin: Content-Security-Policy ───────────────────────
+// GitHub Pages can't send response headers, so the CSP goes in a <meta>.
+// Inline <script> blocks (the theme bootstrap) are allowed by SHA-256 hash,
+// computed per page at build time; JSON-LD isn't executed, so it needs none.
+// Build only: the dev server injects inline styles/scripts for HMR.
+function csp() {
+  return {
+    name: 'csp',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        const hashes = new Set();
+        for (const [, attrs, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+          if (/\bsrc=/.test(attrs) || /application\/ld\+json/.test(attrs) || !body.trim()) continue;
+          hashes.add(`'sha256-${createHash('sha256').update(body).digest('base64')}'`);
+        }
+        const policy = [
+          "default-src 'self'",
+          `script-src 'self' ${[...hashes].join(' ')}`.trim(),
+          "style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+          "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
+          "img-src 'self' data:",
+          "connect-src 'self'",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'none'",
+          'upgrade-insecure-requests',
+        ].join('; ');
+        const tags = [
+          { tag: 'meta', attrs: { 'http-equiv': 'Content-Security-Policy', content: policy }, injectTo: 'head-prepend' },
+          { tag: 'meta', attrs: { name: 'referrer', content: 'strict-origin-when-cross-origin' }, injectTo: 'head-prepend' },
+        ];
+        return { html, tags };
+      },
+    },
+  };
+}
+
 // ── Plugin: sitemap.xml ───────────────────────────────────
 // Emits dist/sitemap.xml with the landing (EN at /, ES at /es/) and every blog page.
 const SITE_URL = 'https://lcampassi.com';
@@ -113,7 +153,7 @@ function sitemap() {
 
 // ── Vite Config ───────────────────────────────────────────
 export default defineConfig({
-  plugins: [htmlInclude(), sitemap()],
+  plugins: [htmlInclude(), sitemap(), csp()],
 
   publicDir: 'public',
 
@@ -128,6 +168,5 @@ export default defineConfig({
 
   server: {
     port: 8080,
-    host: true,
   },
 });
